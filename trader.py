@@ -220,8 +220,22 @@ def load_state():
 def save_state(state):
     state["last_run"] = datetime.now().strftime('%Y-%m-%d %H:%M')
     state["run_count"] = state.get("run_count", 0) + 1
-    with open(STATE_FILE, 'w') as f:
-        json.dump(state, f, indent=2)
+
+    # Backup before writing — if the write crashes, we can recover
+    backup = SCRIPT_DIR / "state.backup.json"
+    if STATE_FILE.exists():
+        import shutil
+        shutil.copy2(STATE_FILE, backup)
+
+    try:
+        with open(STATE_FILE, 'w') as f:
+            json.dump(state, f, indent=2)
+    except Exception:
+        # Restore from backup if write failed
+        if backup.exists():
+            import shutil
+            shutil.copy2(backup, STATE_FILE)
+        raise
 
 
 # ============================================================
