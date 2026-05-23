@@ -552,10 +552,26 @@ def main():
 
     force_run = "--force" in sys.argv
 
-    # Weekend check (before fetching data)
-    if datetime.now().weekday() >= 5 and not force_run:
-        print("Weekend - skipping. Use --force to override.")
-        return
+    # Check if we're in the right time window (3:15-4:15 PM Eastern)
+    if not force_run:
+        try:
+            from zoneinfo import ZoneInfo
+        except ImportError:
+            from backports.zoneinfo import ZoneInfo
+        eastern = datetime.now(ZoneInfo("America/New_York"))
+        et_hour, et_min = eastern.hour, eastern.minute
+        et_total = et_hour * 60 + et_min
+
+        if eastern.weekday() >= 5:
+            print(f"Weekend ({eastern.strftime('%A')}). Skipping.")
+            return
+
+        # Only run between 3:15 PM and 4:15 PM ET
+        if et_total < 15 * 60 + 15 or et_total > 16 * 60 + 15:
+            print(f"Outside trading window (current ET: {eastern.strftime('%I:%M %p')}). Skipping.")
+            return
+
+        print(f"Eastern time: {eastern.strftime('%I:%M %p')} - within trading window.")
 
     print("Fetching prices...")
     prices = get_all_prices()
@@ -563,28 +579,25 @@ def main():
         print("ERROR: No price data fetched. Exiting.")
         sys.exit(1)
 
-    # Holiday check (after fetching data — if no ticker has today's data, market is closed)
+    # Holiday check
     if not is_trading_day(prices) and not force_run:
         print("Market closed today (holiday). Skipping.")
         return
 
-    # Use the latest actual trading date from the data, not today's calendar date
-    # This ensures we record trades on the correct market date
     latest_market_date = max(df.iloc[-1]['date'].date() for df in prices.values())
     today_str = str(latest_market_date)
+
+    # Prevent double execution on same trading day
+    state = load_state()
+    if state.get("last_run_date") == today_str and not force_run:
+        print(f"Already ran for {today_str}. Skipping.")
+        return
+    state["last_run_date"] = today_str
 
     print(f"  Got: {', '.join(prices.keys())}")
     for t, df in prices.items():
         print(f"    {t}: ${df.iloc[-1]['close']:.2f}")
     print()
-
-    state = load_state()
-
-    # Prevent double-counting if script runs twice on the same day
-    if state.get("last_run_date") == today_str and not force_run:
-        print(f"Already ran today ({today_str}). Skipping.")
-        return
-    state["last_run_date"] = today_str
 
     strategies = state["strategies"]
 
