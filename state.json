@@ -1,79 +1,49 @@
 {
-  "created": "2026-05-23 15:47",
-  "last_run": "2026-05-23 15:49",
-  "run_count": 2,
+  "created": "2026-05-23 16:00",
+  "last_run": null,
+  "run_count": 0,
   "strategies": {
     "S1_TQQQ_SOXL_20d_5d": {
       "name": "TQQQ+SOXL 20d mom, 5d check",
       "type": "momentum_rotation",
-      "tickers": [
-        "TQQQ",
-        "SOXL"
-      ],
+      "tickers": ["TQQQ", "SOXL"],
       "mom_period": 20,
       "check_interval": 5,
-      "holding": "SOXL",
-      "entry_price": 190.55999755859375,
-      "entry_date": "2026-05-23",
+      "holding": null,
+      "entry_price": 0,
+      "entry_date": null,
       "equity": 1000.0,
-      "days_since_check": 1,
-      "trades": [
-        {
-          "date": "2026-05-23",
-          "action": "BUY",
-          "ticker": "SOXL",
-          "price": 190.56,
-          "equity": 1000.0
-        }
-      ]
+      "days_since_check": 999,
+      "pending_buy": null,
+      "trades": []
     },
     "S2_TQQQ_SOXL_30d_10d": {
       "name": "TQQQ+SOXL 30d mom, 10d check",
       "type": "momentum_rotation",
-      "tickers": [
-        "TQQQ",
-        "SOXL"
-      ],
+      "tickers": ["TQQQ", "SOXL"],
       "mom_period": 30,
       "check_interval": 10,
-      "holding": "SOXL",
-      "entry_price": 190.55999755859375,
-      "entry_date": "2026-05-23",
+      "holding": null,
+      "entry_price": 0,
+      "entry_date": null,
       "equity": 1000.0,
-      "days_since_check": 1,
-      "trades": [
-        {
-          "date": "2026-05-23",
-          "action": "BUY",
-          "ticker": "SOXL",
-          "price": 190.56,
-          "equity": 1000.0
-        }
-      ]
+      "days_since_check": 999,
+      "pending_buy": null,
+      "trades": []
     },
     "S3_TQQQ_SOXL_20d_10d": {
       "name": "TQQQ+SOXL 20d mom, 10d check",
       "type": "momentum_rotation",
-      "tickers": [
-        "TQQQ",
-        "SOXL"
-      ],
+      "tickers": ["TQQQ", "SOXL"],
       "mom_period": 20,
       "check_interval": 10,
-      "holding": "SOXL",
-      "entry_price": 190.55999755859375,
-      "entry_date": "2026-05-23",
+      "holding": null,
+      "entry_price": 0,
+      "entry_date": null,
       "equity": 1000.0,
-      "days_since_check": 1,
-      "trades": [
-        {
-          "date": "2026-05-23",
-          "action": "BUY",
-          "ticker": "SOXL",
-          "price": 190.56,
-          "equity": 1000.0
-        }
-      ]
+      "days_since_check": 999,
+      "pending_buy": null,
+      "trades": []
     },
     "S4_SPY_RSI": {
       "name": "SPY RSI(2) mean reversion",
@@ -83,6 +53,7 @@
       "entry_date": null,
       "equity": 1000.0,
       "days_in_trade": 0,
+      "pending_buy": null,
       "trades": []
     },
     "S5_QQQ_MOM": {
@@ -93,31 +64,22 @@
       "entry_date": null,
       "equity": 1000.0,
       "days_in_trade": 0,
+      "pending_buy": null,
       "trades": []
     },
     "S6_UPRO_FAS_20d_5d": {
       "name": "UPRO+FAS 20d mom, 5d check",
       "type": "momentum_rotation",
-      "tickers": [
-        "UPRO",
-        "FAS"
-      ],
+      "tickers": ["UPRO", "FAS"],
       "mom_period": 20,
       "check_interval": 5,
-      "holding": "UPRO",
-      "entry_price": 143.0800018310547,
-      "entry_date": "2026-05-23",
+      "holding": null,
+      "entry_price": 0,
+      "entry_date": null,
       "equity": 1000.0,
-      "days_since_check": 1,
-      "trades": [
-        {
-          "date": "2026-05-23",
-          "action": "BUY",
-          "ticker": "UPRO",
-          "price": 143.08,
-          "equity": 1000.0
-        }
-      ]
+      "days_since_check": 999,
+      "pending_buy": null,
+      "trades": []
     }
   }
 }
