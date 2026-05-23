@@ -255,30 +255,12 @@ def run_momentum_rotation(strat, prices, today_str):
 
     strat["days_since_check"] = 0
 
-    # If we have a pending buy from previous check, execute it at today's open
-    if strat.get("pending_buy"):
-        ticker = strat["pending_buy"]
-        if ticker in prices:
-            entry_price = prices[ticker].iloc[-1]['open']  # buy at open
-            strat["holding"] = ticker
-            strat["entry_price"] = entry_price
-            strat["entry_date"] = today_str
-            strat["trades"].append({
-                "date": today_str,
-                "action": "BUY",
-                "ticker": ticker,
-                "price": round(entry_price, 2),
-                "equity": round(strat["equity"], 2),
-                "note": "executed at open"
-            })
-        strat["pending_buy"] = None
-
     best, best_mom = eval_momentum_rotation(prices, strat["tickers"], strat["mom_period"])
 
     action = None
 
     if best != strat["holding"]:
-        # Close current position at today's close
+        # Sell current position at close
         if strat["holding"] and strat["holding"] in prices:
             exit_price = prices[strat["holding"]].iloc[-1]['close']
             pnl_pct = (exit_price / strat["entry_price"] - 1) * 100 if strat["entry_price"] > 0 else 0
@@ -294,18 +276,28 @@ def run_momentum_rotation(strat, prices, today_str):
                 "equity": round(strat["equity"], 2)
             })
             action = f"SELL {strat['holding']} ({pnl_pct:+.1f}%)"
+
+        # Buy new position at close (executed 30 min before close in real life)
+        if best and best in prices:
+            entry_price = prices[best].iloc[-1]['close']
+            strat["holding"] = best
+            strat["entry_price"] = entry_price
+            strat["entry_date"] = today_str
+
+            strat["trades"].append({
+                "date": today_str,
+                "action": "BUY",
+                "ticker": best,
+                "price": round(entry_price, 2),
+                "equity": round(strat["equity"], 2)
+            })
+            if action:
+                action += f", BUY {best}"
+            else:
+                action = f"BUY {best}"
+        else:
             strat["holding"] = None
             strat["entry_price"] = 0
-
-        # Queue buy for next trading day's open
-        if best:
-            strat["pending_buy"] = best
-            if action:
-                action += f", BUY {best} queued for next open"
-            else:
-                action = f"BUY {best} queued for next open"
-        else:
-            strat["pending_buy"] = None
             strat["entry_date"] = None
             if action:
                 action += ", CASH"
@@ -327,39 +319,21 @@ def run_rsi_strategy(strat, prices, today_str):
     if rsi is None:
         return None
 
-    spy_close = prices['SPY'].iloc[-1]['close']
-    spy_open = prices['SPY'].iloc[-1]['open']
+    spy_price = prices['SPY'].iloc[-1]['close']
     action = None
-
-    # Execute pending buy at today's open
-    if strat.get("pending_buy"):
-        strat["holding"] = "SPY"
-        strat["entry_price"] = spy_open
-        strat["entry_date"] = today_str
-        strat["days_in_trade"] = 0
-        strat["trades"].append({
-            "date": today_str,
-            "action": "BUY",
-            "ticker": "SPY",
-            "price": round(spy_open, 2),
-            "equity": round(strat["equity"], 2),
-            "note": "executed at open"
-        })
-        strat["pending_buy"] = None
-        action = f"BUY SPY at open ${spy_open:.0f}"
 
     if strat["holding"]:
         strat["days_in_trade"] = strat.get("days_in_trade", 0) + 1
         shares = strat["equity"] / strat["entry_price"] if strat["entry_price"] > 0 else 0
-        strat["equity"] = shares * spy_close if shares > 0 else strat["equity"]
+        strat["equity"] = shares * spy_price if shares > 0 else strat["equity"]
 
         if rsi > 60 or strat["days_in_trade"] >= 15:
-            pnl_pct = (spy_close / strat["entry_price"] - 1) * 100 if strat["entry_price"] > 0 else 0
+            pnl_pct = (spy_price / strat["entry_price"] - 1) * 100 if strat["entry_price"] > 0 else 0
             strat["trades"].append({
                 "date": today_str,
                 "action": "SELL",
                 "ticker": "SPY",
-                "price": round(spy_close, 2),
+                "price": round(spy_price, 2),
                 "pnl_pct": round(pnl_pct, 2),
                 "equity": round(strat["equity"], 2)
             })
@@ -367,13 +341,23 @@ def run_rsi_strategy(strat, prices, today_str):
             strat["entry_price"] = 0
             strat["days_in_trade"] = 0
             action = f"SELL SPY ({pnl_pct:+.1f}%)"
-        elif not action:
+        else:
             action = f"HOLD SPY (RSI={rsi:.0f}, day {strat['days_in_trade']})"
     else:
         if rsi < 10:
-            strat["pending_buy"] = "SPY"
-            action = f"BUY SPY queued for next open (RSI={rsi:.0f})"
-        elif not action:
+            strat["holding"] = "SPY"
+            strat["entry_price"] = spy_price
+            strat["entry_date"] = today_str
+            strat["days_in_trade"] = 0
+            strat["trades"].append({
+                "date": today_str,
+                "action": "BUY",
+                "ticker": "SPY",
+                "price": round(spy_price, 2),
+                "equity": round(strat["equity"], 2)
+            })
+            action = f"BUY SPY (RSI={rsi:.0f})"
+        else:
             action = f"WAIT (RSI={rsi:.0f}, need <10)"
 
     return action
@@ -384,39 +368,21 @@ def run_qqq_momentum(strat, prices, today_str):
     if mom is None:
         return None
 
-    qqq_close = prices['QQQ'].iloc[-1]['close']
-    qqq_open = prices['QQQ'].iloc[-1]['open']
+    qqq_price = prices['QQQ'].iloc[-1]['close']
     action = None
-
-    # Execute pending buy at today's open
-    if strat.get("pending_buy"):
-        strat["holding"] = "QQQ"
-        strat["entry_price"] = qqq_open
-        strat["entry_date"] = today_str
-        strat["days_in_trade"] = 0
-        strat["trades"].append({
-            "date": today_str,
-            "action": "BUY",
-            "ticker": "QQQ",
-            "price": round(qqq_open, 2),
-            "equity": round(strat["equity"], 2),
-            "note": "executed at open"
-        })
-        strat["pending_buy"] = None
-        action = f"BUY QQQ at open ${qqq_open:.0f}"
 
     if strat["holding"]:
         strat["days_in_trade"] = strat.get("days_in_trade", 0) + 1
         shares = strat["equity"] / strat["entry_price"] if strat["entry_price"] > 0 else 0
-        strat["equity"] = shares * qqq_close if shares > 0 else strat["equity"]
+        strat["equity"] = shares * qqq_price if shares > 0 else strat["equity"]
 
         if strat["days_in_trade"] >= 20:
-            pnl_pct = (qqq_close / strat["entry_price"] - 1) * 100 if strat["entry_price"] > 0 else 0
+            pnl_pct = (qqq_price / strat["entry_price"] - 1) * 100 if strat["entry_price"] > 0 else 0
             strat["trades"].append({
                 "date": today_str,
                 "action": "SELL",
                 "ticker": "QQQ",
-                "price": round(qqq_close, 2),
+                "price": round(qqq_price, 2),
                 "pnl_pct": round(pnl_pct, 2),
                 "equity": round(strat["equity"], 2)
             })
@@ -424,13 +390,23 @@ def run_qqq_momentum(strat, prices, today_str):
             strat["entry_price"] = 0
             strat["days_in_trade"] = 0
             action = f"SELL QQQ ({pnl_pct:+.1f}%)"
-        elif not action:
+        else:
             action = f"HOLD QQQ (day {strat['days_in_trade']}/20)"
     else:
         if mom > 0.03:
-            strat["pending_buy"] = "QQQ"
-            action = f"BUY QQQ queued for next open (5d mom={mom*100:.1f}%)"
-        elif not action:
+            strat["holding"] = "QQQ"
+            strat["entry_price"] = qqq_price
+            strat["entry_date"] = today_str
+            strat["days_in_trade"] = 0
+            strat["trades"].append({
+                "date": today_str,
+                "action": "BUY",
+                "ticker": "QQQ",
+                "price": round(qqq_price, 2),
+                "equity": round(strat["equity"], 2)
+            })
+            action = f"BUY QQQ (5d mom={mom*100:.1f}%)"
+        else:
             action = f"WAIT (5d mom={mom*100:.1f}%, need >3%)"
 
     return action

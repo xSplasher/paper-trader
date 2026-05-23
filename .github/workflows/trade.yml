@@ -2,8 +2,8 @@ name: Paper Trader Daily Run
 
 on:
   schedule:
-    # Run at 9:30 PM UTC (after US market close at 4 PM ET)
-    - cron: '30 21 * * 1-5'
+    # Run at 7:30 PM UTC (3:30 PM ET, 30 min before US market close)
+    - cron: '30 19 * * 1-5'
   workflow_dispatch: # Manual trigger button
 
 jobs:
