@@ -2,9 +2,12 @@ name: Paper Trader Daily Run
 
 on:
   schedule:
-    # Run at 7:30 PM UTC (3:30 PM ET, 30 min before close)
-    # Analyze and execute before market closes. Same price as signal.
+    # Run twice to cover both DST and non-DST
+    # 7:30 PM UTC = 3:30 PM ET during daylight saving (Mar-Nov)
+    # 8:30 PM UTC = 3:30 PM ET during standard time (Nov-Mar)
+    # The script has duplicate run protection so only one actually executes
     - cron: '30 19 * * 1-5'
+    - cron: '30 20 * * 1-5'
   workflow_dispatch: # Manual trigger button
 
 jobs:
