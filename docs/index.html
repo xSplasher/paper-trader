@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Trader Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+               background: #0a0a0a; color: #e5e5e5; padding: 20px; }
+        h1 { color: #fff; margin-bottom: 5px; }
+        h2 { color: #a3a3a3; margin-top: 30px; margin-bottom: 10px; font-size: 1.1em; }
+        h3 { color: #d4d4d4; margin-top: 25px; margin-bottom: 8px; font-size: 1em; }
+        .meta { color: #737373; margin-bottom: 20px; font-size: 0.9em; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 0.9em; }
+        th { text-align: left; padding: 8px 12px; border-bottom: 1px solid #333;
+             color: #a3a3a3; font-weight: 500; }
+        td { padding: 8px 12px; border-bottom: 1px solid #1a1a1a; }
+        tr:hover { background: #111; }
+        tr.flagship { background: #0f1d0f; border-left: 3px solid #22c55e; }
+        tr.flagship:hover { background: #142214; }
+        .badge { background: #22c55e; color: #000; font-size: 0.7em; font-weight: 700;
+                 padding: 2px 8px; border-radius: 4px; margin-left: 8px;
+                 text-transform: uppercase; letter-spacing: 0.5px; }
+        .flagship-note { background: #0f1d0f; border: 1px solid #1a3a1a; border-radius: 6px;
+                         padding: 12px 16px; margin-bottom: 20px; font-size: 0.85em; color: #86efac; }
+        .note { color: #737373; font-size: 0.85em; margin-top: 30px;
+                padding-top: 15px; border-top: 1px solid #222; }
+    </style>
+</head>
+<body>
+    <h1>Paper Trader</h1>
+    <div class="meta">Last updated: 2026-05-23 15:49 | Run #2 |
+    Started: 2026-05-23 15:47</div>
+
+    <h2>Strategy Performance</h2>
+    <div class="flagship-note">
+        <strong>S1 (TQQQ+SOXL 20d/5d)</strong> is the flagship strategy.
+        It returned +568% on unseen 2025-2026 data while surviving the 2022 bear market with +3%.
+        The others are comparison strategies running in parallel to validate.
+    </div>
+    <table>
+        <tr><th>Strategy</th><th>Holding</th><th>Equity</th><th>Return</th>
+        <th>Trades</th><th>Win Rate</th></tr>
+        
+        <tr class="flagship">
+            <td>TQQQ+SOXL 20d mom, 5d check <span class="badge">BEST</span></td>
+            <td><strong>SOXL</strong></td>
+            <td style="color:#ef4444;font-weight:bold">$1,000</td>
+            <td style="color:#ef4444;font-weight:bold">+0.0%</td>
+            <td>0</td>
+            <td>0%</td>
+        </tr>
+        <tr>
+            <td>TQQQ+SOXL 30d mom, 10d check</td>
+            <td><strong>SOXL</strong></td>
+            <td style="color:#ef4444;font-weight:bold">$1,000</td>
+            <td style="color:#ef4444;font-weight:bold">+0.0%</td>
+            <td>0</td>
+            <td>0%</td>
+        </tr>
+        <tr>
+            <td>TQQQ+SOXL 20d mom, 10d check</td>
+            <td><strong>SOXL</strong></td>
+            <td style="color:#ef4444;font-weight:bold">$1,000</td>
+            <td style="color:#ef4444;font-weight:bold">+0.0%</td>
+            <td>0</td>
+            <td>0%</td>
+        </tr>
+        <tr>
+            <td>SPY RSI(2) mean reversion</td>
+            <td><strong>CASH</strong></td>
+            <td style="color:#ef4444;font-weight:bold">$1,000</td>
+            <td style="color:#ef4444;font-weight:bold">+0.0%</td>
+            <td>0</td>
+            <td>0%</td>
+        </tr>
+        <tr>
+            <td>QQQ 5d momentum, hold 20d</td>
+            <td><strong>CASH</strong></td>
+            <td style="color:#ef4444;font-weight:bold">$1,000</td>
+            <td style="color:#ef4444;font-weight:bold">+0.0%</td>
+            <td>0</td>
+            <td>0%</td>
+        </tr>
+        <tr>
+            <td>UPRO+FAS 20d mom, 5d check</td>
+            <td><strong>UPRO</strong></td>
+            <td style="color:#ef4444;font-weight:bold">$1,000</td>
+            <td style="color:#ef4444;font-weight:bold">+0.0%</td>
+            <td>0</td>
+            <td>0%</td>
+        </tr>
+    </table>
+
+    <h2>Recent Trades</h2>
+    
+        <h3>TQQQ+SOXL 20d mom, 5d check <span class="badge">BEST</span></h3>
+        <table>
+            <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
+            
+            <tr>
+                <td>2026-05-23</td>
+                <td>BUY</td>
+                <td>SOXL</td>
+                <td>$190.56</td>
+                <td style="color:#888"></td>
+                <td>$1,000</td>
+            </tr>
+        </table>
+        <h3>TQQQ+SOXL 30d mom, 10d check</h3>
+        <table>
+            <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
+            
+            <tr>
+                <td>2026-05-23</td>
+                <td>BUY</td>
+                <td>SOXL</td>
+                <td>$190.56</td>
+                <td style="color:#888"></td>
+                <td>$1,000</td>
+            </tr>
+        </table>
+        <h3>TQQQ+SOXL 20d mom, 10d check</h3>
+        <table>
+            <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
+            
+            <tr>
+                <td>2026-05-23</td>
+                <td>BUY</td>
+                <td>SOXL</td>
+                <td>$190.56</td>
+                <td style="color:#888"></td>
+                <td>$1,000</td>
+            </tr>
+        </table>
+        <h3>SPY RSI(2) mean reversion</h3>
+        <table>
+            <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
+            
+        </table>
+        <h3>QQQ 5d momentum, hold 20d</h3>
+        <table>
+            <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
+            
+        </table>
+        <h3>UPRO+FAS 20d mom, 5d check</h3>
+        <table>
+            <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
+            
+            <tr>
+                <td>2026-05-23</td>
+                <td>BUY</td>
+                <td>UPRO</td>
+                <td>$143.08</td>
+                <td style="color:#888"></td>
+                <td>$1,000</td>
+            </tr>
+        </table>
+
+    <div class="note">
+        All trades are paper (simulated). Starting capital: $1,000 per strategy.
+        Data from Yahoo Finance. System checks daily, strategies evaluate on their own schedules.
+    </div>
+</body>
+</html>

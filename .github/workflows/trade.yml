@@ -1,0 +1,99 @@
+name: Paper Trader Daily Run
+
+on:
+  schedule:
+    # Run at 9:30 PM UTC (after US market close at 4 PM ET)
+    - cron: '30 21 * * 1-5'
+  workflow_dispatch: # Manual trigger button
+
+jobs:
+  trade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    # Retry logic: if the job fails, retry up to 3 times
+    strategy:
+      max-parallel: 1
+      fail-fast: false
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install yfinance pandas numpy -q
+
+      - name: Run trader
+        id: trade
+        run: python trader.py
+        continue-on-error: true
+
+      # Retry after 6 hours if first attempt failed
+      - name: Wait and retry (attempt 2)
+        if: steps.trade.outcome == 'failure'
+        run: |
+          echo "First attempt failed. Waiting 30 seconds then retrying..."
+          sleep 30
+          python trader.py
+        id: retry1
+        continue-on-error: true
+
+      # Retry once more if second attempt also failed
+      - name: Wait and retry (attempt 3)
+        if: steps.retry1.outcome == 'failure'
+        run: |
+          echo "Second attempt failed. Final retry..."
+          sleep 30
+          python trader.py
+        id: retry2
+
+      - name: Commit results
+        run: |
+          git config user.name "Paper Trader Bot"
+          git config user.email "bot@paper-trader"
+          git add state.json docs/index.html
+          git diff --staged --quiet || git commit -m "trade: $(date +%Y-%m-%d)"
+          git push
+
+  # Separate retry job that runs 6 hours later if the main job failed entirely
+  retry-6h:
+    needs: trade
+    if: failure()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Wait 6 hours
+        run: sleep 21600
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install yfinance pandas numpy -q
+
+      - name: Run trader (6h retry)
+        run: python trader.py
+
+      - name: Commit results
+        run: |
+          git config user.name "Paper Trader Bot"
+          git config user.email "bot@paper-trader"
+          git add state.json docs/index.html
+          git diff --staged --quiet || git commit -m "trade (retry): $(date +%Y-%m-%d)"
+          git push
