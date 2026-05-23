@@ -98,10 +98,6 @@ def eval_momentum_rotation(prices, tickers, mom_period):
         ma = df['close'].tail(mom_period).mean()
         mom = (current / past) - 1
 
-        # Skip if momentum is absurdly high — likely a stock split artifact
-        if abs(mom) > 0.80:
-            continue
-
         if current > ma and mom > 0 and mom > best_mom:
             best_mom = mom
             best = t
@@ -249,12 +245,14 @@ def save_state(state):
 def run_momentum_rotation(strat, prices, today_str):
     strat["days_since_check"] = strat.get("days_since_check", 0) + 1
 
+    # Update equity using stored shares (not recalculated)
+    if strat["holding"] and strat["holding"] in prices:
+        current_price = prices[strat["holding"]].iloc[-1]['close']
+        shares = strat.get("shares", 0)
+        if shares > 0:
+            strat["equity"] = shares * current_price
+
     if strat["days_since_check"] < strat["check_interval"]:
-        # Update equity if holding
-        if strat["holding"] and strat["holding"] in prices:
-            current_price = prices[strat["holding"]].iloc[-1]['close']
-            shares = strat["equity"] / strat["entry_price"] if strat["entry_price"] > 0 else 0
-            strat["equity"] = shares * current_price if shares > 0 else strat["equity"]
         return None
 
     strat["days_since_check"] = 0
@@ -268,8 +266,6 @@ def run_momentum_rotation(strat, prices, today_str):
         if strat["holding"] and strat["holding"] in prices:
             exit_price = prices[strat["holding"]].iloc[-1]['close']
             pnl_pct = (exit_price / strat["entry_price"] - 1) * 100 if strat["entry_price"] > 0 else 0
-            shares = strat["equity"] / strat["entry_price"] if strat["entry_price"] > 0 else 0
-            strat["equity"] = shares * exit_price if shares > 0 else strat["equity"]
 
             strat["trades"].append({
                 "date": today_str,
@@ -281,12 +277,13 @@ def run_momentum_rotation(strat, prices, today_str):
             })
             action = f"SELL {strat['holding']} ({pnl_pct:+.1f}%)"
 
-        # Buy new position at close (executed 30 min before close in real life)
+        # Buy new position at close
         if best and best in prices:
             entry_price = prices[best].iloc[-1]['close']
             strat["holding"] = best
             strat["entry_price"] = entry_price
             strat["entry_date"] = today_str
+            strat["shares"] = strat["equity"] / entry_price
 
             strat["trades"].append({
                 "date": today_str,
@@ -303,16 +300,12 @@ def run_momentum_rotation(strat, prices, today_str):
             strat["holding"] = None
             strat["entry_price"] = 0
             strat["entry_date"] = None
+            strat["shares"] = 0
             if action:
                 action += ", CASH"
             else:
                 action = "CASH (no momentum)"
     else:
-        # Update equity
-        if strat["holding"] and strat["holding"] in prices:
-            current_price = prices[strat["holding"]].iloc[-1]['close']
-            shares = strat["equity"] / strat["entry_price"] if strat["entry_price"] > 0 else 0
-            strat["equity"] = shares * current_price if shares > 0 else strat["equity"]
         action = f"HOLD {strat['holding'] or 'CASH'}"
 
     return action
@@ -326,10 +319,12 @@ def run_rsi_strategy(strat, prices, today_str):
     spy_price = prices['SPY'].iloc[-1]['close']
     action = None
 
+    # Update equity using stored shares
     if strat["holding"]:
+        shares = strat.get("shares", 0)
+        if shares > 0:
+            strat["equity"] = shares * spy_price
         strat["days_in_trade"] = strat.get("days_in_trade", 0) + 1
-        shares = strat["equity"] / strat["entry_price"] if strat["entry_price"] > 0 else 0
-        strat["equity"] = shares * spy_price if shares > 0 else strat["equity"]
 
         if rsi > 60 or strat["days_in_trade"] >= 15:
             pnl_pct = (spy_price / strat["entry_price"] - 1) * 100 if strat["entry_price"] > 0 else 0
@@ -343,6 +338,7 @@ def run_rsi_strategy(strat, prices, today_str):
             })
             strat["holding"] = None
             strat["entry_price"] = 0
+            strat["shares"] = 0
             strat["days_in_trade"] = 0
             action = f"SELL SPY ({pnl_pct:+.1f}%)"
         else:
@@ -352,6 +348,7 @@ def run_rsi_strategy(strat, prices, today_str):
             strat["holding"] = "SPY"
             strat["entry_price"] = spy_price
             strat["entry_date"] = today_str
+            strat["shares"] = strat["equity"] / spy_price
             strat["days_in_trade"] = 0
             strat["trades"].append({
                 "date": today_str,
@@ -375,10 +372,12 @@ def run_qqq_momentum(strat, prices, today_str):
     qqq_price = prices['QQQ'].iloc[-1]['close']
     action = None
 
+    # Update equity using stored shares
     if strat["holding"]:
+        shares = strat.get("shares", 0)
+        if shares > 0:
+            strat["equity"] = shares * qqq_price
         strat["days_in_trade"] = strat.get("days_in_trade", 0) + 1
-        shares = strat["equity"] / strat["entry_price"] if strat["entry_price"] > 0 else 0
-        strat["equity"] = shares * qqq_price if shares > 0 else strat["equity"]
 
         if strat["days_in_trade"] >= 20:
             pnl_pct = (qqq_price / strat["entry_price"] - 1) * 100 if strat["entry_price"] > 0 else 0
@@ -392,6 +391,7 @@ def run_qqq_momentum(strat, prices, today_str):
             })
             strat["holding"] = None
             strat["entry_price"] = 0
+            strat["shares"] = 0
             strat["days_in_trade"] = 0
             action = f"SELL QQQ ({pnl_pct:+.1f}%)"
         else:
@@ -401,6 +401,7 @@ def run_qqq_momentum(strat, prices, today_str):
             strat["holding"] = "QQQ"
             strat["entry_price"] = qqq_price
             strat["entry_date"] = today_str
+            strat["shares"] = strat["equity"] / qqq_price
             strat["days_in_trade"] = 0
             strat["trades"].append({
                 "date": today_str,
@@ -598,6 +599,13 @@ def main():
     print()
 
     state = load_state()
+
+    # Prevent double-counting if script runs twice on the same day
+    if state.get("last_run_date") == today_str and not force_run:
+        print(f"Already ran today ({today_str}). Skipping.")
+        return
+    state["last_run_date"] = today_str
+
     strategies = state["strategies"]
 
     print("Running strategies...")

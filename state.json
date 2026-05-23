@@ -1,6 +1,7 @@
 {
   "created": "2026-05-23 16:00",
   "last_run": null,
+  "last_run_date": null,
   "run_count": 0,
   "strategies": {
     "S1_TQQQ_SOXL_20d_5d": {
@@ -13,8 +14,8 @@
       "entry_price": 0,
       "entry_date": null,
       "equity": 1000.0,
+      "shares": 0,
       "days_since_check": 999,
-      "pending_buy": null,
       "trades": []
     },
     "S2_TQQQ_SOXL_30d_10d": {
@@ -27,8 +28,8 @@
       "entry_price": 0,
       "entry_date": null,
       "equity": 1000.0,
+      "shares": 0,
       "days_since_check": 999,
-      "pending_buy": null,
       "trades": []
     },
     "S3_TQQQ_SOXL_20d_10d": {
@@ -41,8 +42,8 @@
       "entry_price": 0,
       "entry_date": null,
       "equity": 1000.0,
+      "shares": 0,
       "days_since_check": 999,
-      "pending_buy": null,
       "trades": []
     },
     "S4_SPY_RSI": {
@@ -52,8 +53,8 @@
       "entry_price": 0,
       "entry_date": null,
       "equity": 1000.0,
+      "shares": 0,
       "days_in_trade": 0,
-      "pending_buy": null,
       "trades": []
     },
     "S5_QQQ_MOM": {
@@ -63,8 +64,8 @@
       "entry_price": 0,
       "entry_date": null,
       "equity": 1000.0,
+      "shares": 0,
       "days_in_trade": 0,
-      "pending_buy": null,
       "trades": []
     },
     "S6_UPRO_FAS_20d_5d": {
@@ -77,8 +78,8 @@
       "entry_price": 0,
       "entry_date": null,
       "equity": 1000.0,
+      "shares": 0,
       "days_since_check": 999,
-      "pending_buy": null,
       "trades": []
     }
   }
