@@ -98,6 +98,10 @@ def eval_momentum_rotation(prices, tickers, mom_period):
         ma = df['close'].tail(mom_period).mean()
         mom = (current / past) - 1
 
+        # Skip if momentum is absurdly high — likely a stock split artifact
+        if abs(mom) > 0.80:
+            continue
+
         if current > ma and mom > 0 and mom > best_mom:
             best_mom = mom
             best = t
@@ -543,11 +547,22 @@ def generate_html(state):
 # MAIN
 # ============================================================
 
-def is_trading_day():
+def is_trading_day(prices):
+    """Check if today is a real trading day by looking at the actual data.
+    If the latest price data is from today, the market is open.
+    If it's from yesterday or earlier, the market is closed (weekend/holiday)."""
     today = datetime.now()
     if today.weekday() >= 5:
         return False
-    return True
+
+    # Check if any ticker has data from today
+    for ticker, df in prices.items():
+        latest_date = df.iloc[-1]['date'].date()
+        if latest_date == today.date():
+            return True
+
+    # No ticker has today's data — market is closed (holiday)
+    return False
 
 
 def main():
@@ -555,7 +570,9 @@ def main():
     print()
 
     force_run = "--force" in sys.argv
-    if not is_trading_day() and not force_run:
+
+    # Weekend check (before fetching data)
+    if datetime.now().weekday() >= 5 and not force_run:
         print("Weekend - skipping. Use --force to override.")
         return
 
@@ -565,7 +582,15 @@ def main():
         print("ERROR: No price data fetched. Exiting.")
         sys.exit(1)
 
-    today_str = datetime.now().strftime('%Y-%m-%d')
+    # Holiday check (after fetching data — if no ticker has today's data, market is closed)
+    if not is_trading_day(prices) and not force_run:
+        print("Market closed today (holiday). Skipping.")
+        return
+
+    # Use the latest actual trading date from the data, not today's calendar date
+    # This ensures we record trades on the correct market date
+    latest_market_date = max(df.iloc[-1]['date'].date() for df in prices.values())
+    today_str = str(latest_market_date)
 
     print(f"  Got: {', '.join(prices.keys())}")
     for t, df in prices.items():

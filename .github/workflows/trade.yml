@@ -2,8 +2,10 @@ name: Paper Trader Daily Run
 
 on:
   schedule:
-    # Run at 7:30 PM UTC (3:30 PM ET, 30 min before US market close)
-    - cron: '30 19 * * 1-5'
+    # Run at 8:30 PM UTC (4:30 PM ET, 30 min after US market close)
+    # Close prices are available. In real life you'd place a Market-On-Close order
+    # before 3:45 PM which executes at the closing price automatically.
+    - cron: '30 20 * * 1-5'
   workflow_dispatch: # Manual trigger button
 
 jobs:
