@@ -81,6 +81,34 @@
       "shares": 0,
       "days_since_check": 999,
       "trades": []
+    },
+    "S7_KORU_NAIL_ERX_20d_5d": {
+      "name": "KORU+NAIL+ERX 20d mom, 5d check",
+      "type": "momentum_rotation",
+      "tickers": ["KORU", "NAIL", "ERX"],
+      "mom_period": 20,
+      "check_interval": 5,
+      "holding": null,
+      "entry_price": 0,
+      "entry_date": null,
+      "equity": 1000.0,
+      "shares": 0,
+      "days_since_check": 999,
+      "trades": []
+    },
+    "S8_KORU_DPST_20d_5d": {
+      "name": "KORU+DPST 20d mom, 5d check",
+      "type": "momentum_rotation",
+      "tickers": ["KORU", "DPST"],
+      "mom_period": 20,
+      "check_interval": 5,
+      "holding": null,
+      "entry_price": 0,
+      "entry_date": null,
+      "equity": 1000.0,
+      "shares": 0,
+      "days_since_check": 999,
+      "trades": []
     }
   }
 }

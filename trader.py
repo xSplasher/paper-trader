@@ -1,15 +1,19 @@
 """
-Paper Trading System — 6 strategies running simultaneously.
+Paper Trading System — 8 strategies running simultaneously.
 Runs daily. Checks signals on schedule. Logs everything to state.json.
 Generates HTML dashboard at docs/index.html.
 
 Strategies:
-1. TQQQ+SOXL, 20d momentum, 5d check (best OOS performer)
+1. TQQQ+SOXL, 20d momentum, 5d check (FLAGSHIP — best OOS performer)
 2. TQQQ+SOXL, 30d momentum, 10d check (slower, fewer trades)
 3. TQQQ+SOXL, 20d momentum, 10d check (conservative)
 4. SPY RSI(2) mean reversion (buy dips, hold ~5 days)
 5. QQQ 5d momentum > 3%, hold 20 days
 6. UPRO+FAS, 20d momentum, 5d check (non-tech rotation)
+7. KORU+NAIL+ERX, 20d momentum, 5d check (PROBATIONARY — added 2026-05-25,
+   validated train +32% / test +95% on 2023-2026 unseen)
+8. KORU+DPST, 20d momentum, 5d check (PROBATIONARY — added 2026-05-25,
+   validated train +19% / test +54% on 2023-2026 unseen)
 """
 
 import json
@@ -57,7 +61,8 @@ def fetch_prices(ticker, days=60):
 
 
 def get_all_prices():
-    tickers = ['TQQQ', 'SOXL', 'SPY', 'QQQ', 'UPRO', 'FAS']
+    tickers = ['TQQQ', 'SOXL', 'SPY', 'QQQ', 'UPRO', 'FAS',
+               'KORU', 'NAIL', 'ERX', 'DPST']
     prices = {}
     for t in tickers:
         try:
@@ -129,12 +134,10 @@ def eval_qqq_momentum(prices):
 # STATE MANAGEMENT
 # ============================================================
 
-def load_state():
-    if STATE_FILE.exists():
-        with open(STATE_FILE) as f:
-            return json.load(f)
-
-    strategies = {
+def get_default_strategies():
+    """Single source of truth for strategy definitions. Adding a strategy here
+    auto-applies to fresh state AND to existing state via load_state migration."""
+    return {
         "S1_TQQQ_SOXL_20d_5d": {
             "name": "TQQQ+SOXL 20d mom, 5d check",
             "type": "momentum_rotation",
@@ -145,6 +148,7 @@ def load_state():
             "entry_price": 0,
             "entry_date": None,
             "equity": STARTING_CAPITAL,
+            "shares": 0,
             "days_since_check": 999,
             "trades": []
         },
@@ -158,6 +162,7 @@ def load_state():
             "entry_price": 0,
             "entry_date": None,
             "equity": STARTING_CAPITAL,
+            "shares": 0,
             "days_since_check": 999,
             "trades": []
         },
@@ -171,6 +176,7 @@ def load_state():
             "entry_price": 0,
             "entry_date": None,
             "equity": STARTING_CAPITAL,
+            "shares": 0,
             "days_since_check": 999,
             "trades": []
         },
@@ -181,6 +187,7 @@ def load_state():
             "entry_price": 0,
             "entry_date": None,
             "equity": STARTING_CAPITAL,
+            "shares": 0,
             "days_in_trade": 0,
             "trades": []
         },
@@ -191,6 +198,7 @@ def load_state():
             "entry_price": 0,
             "entry_date": None,
             "equity": STARTING_CAPITAL,
+            "shares": 0,
             "days_in_trade": 0,
             "trades": []
         },
@@ -204,16 +212,60 @@ def load_state():
             "entry_price": 0,
             "entry_date": None,
             "equity": STARTING_CAPITAL,
+            "shares": 0,
+            "days_since_check": 999,
+            "trades": []
+        },
+        "S7_KORU_NAIL_ERX_20d_5d": {
+            "name": "KORU+NAIL+ERX 20d mom, 5d check",
+            "type": "momentum_rotation",
+            "tickers": ["KORU", "NAIL", "ERX"],
+            "mom_period": 20,
+            "check_interval": 5,
+            "holding": None,
+            "entry_price": 0,
+            "entry_date": None,
+            "equity": STARTING_CAPITAL,
+            "shares": 0,
+            "days_since_check": 999,
+            "trades": []
+        },
+        "S8_KORU_DPST_20d_5d": {
+            "name": "KORU+DPST 20d mom, 5d check",
+            "type": "momentum_rotation",
+            "tickers": ["KORU", "DPST"],
+            "mom_period": 20,
+            "check_interval": 5,
+            "holding": None,
+            "entry_price": 0,
+            "entry_date": None,
+            "equity": STARTING_CAPITAL,
+            "shares": 0,
             "days_since_check": 999,
             "trades": []
         }
     }
 
+
+def load_state():
+    defaults = get_default_strategies()
+
+    if STATE_FILE.exists():
+        with open(STATE_FILE) as f:
+            state = json.load(f)
+        # Migration: add any strategy slots defined in defaults but missing from
+        # saved state. Lets us roll out new strategies without losing existing state.
+        for sid, default_strat in defaults.items():
+            if sid not in state["strategies"]:
+                state["strategies"][sid] = default_strat
+                print(f"  Added new strategy slot: {sid}")
+        return state
+
     return {
         "created": datetime.now().strftime('%Y-%m-%d %H:%M'),
         "last_run": None,
         "run_count": 0,
-        "strategies": strategies
+        "strategies": defaults
     }
 
 
@@ -500,8 +552,9 @@ def generate_html(state):
     <h2>Strategy Performance</h2>
     <div class="flagship-note">
         <strong>S1 (TQQQ+SOXL 20d/5d)</strong> is the flagship strategy.
-        It returned +568% on unseen 2025-2026 data while surviving the 2022 bear market with +3%.
-        The others are comparison strategies running in parallel to validate.
+        Returned +568% on unseen 2025-2026 data while surviving 2022 bear with +3%.
+        S2-S6 are comparison strategies. S7-S8 are probationary additions
+        (validated on 2023-2026 unseen data, monitored live before promotion).
     </div>
     <table>
         <tr><th>Strategy</th><th>Holding</th><th>Equity</th><th>Return</th>
