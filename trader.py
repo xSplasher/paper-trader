@@ -7,7 +7,7 @@ Strategies:
 1. TQQQ+SOXL, 20d momentum, 5d check (FLAGSHIP — best OOS performer)
 2. TQQQ+SOXL, 30d momentum, 10d check (slower, fewer trades)
 3. TQQQ+SOXL, 20d momentum, 10d check (conservative)
-4. SPY RSI(2) mean reversion (buy dips, hold ~5 days)
+4. SPY RSI(2) mean reversion (buy RSI<10, sell RSI>60 or 15-day cap)
 5. QQQ 5d momentum > 3%, hold 20 days
 6. UPRO+FAS, 20d momentum, 5d check (non-tech rotation)
 7. KORU+NAIL+ERX, 20d momentum, 5d check (PROBATIONARY — added 2026-05-25,
@@ -270,7 +270,12 @@ def load_state():
 
 
 def save_state(state):
-    state["last_run"] = datetime.now().strftime('%Y-%m-%d %H:%M')
+    try:
+        from zoneinfo import ZoneInfo
+        et_now = datetime.now(ZoneInfo("America/New_York"))
+        state["last_run"] = et_now.strftime('%Y-%m-%d %H:%M ET')
+    except Exception:
+        state["last_run"] = datetime.now().strftime('%Y-%m-%d %H:%M UTC')
     state["run_count"] = state.get("run_count", 0) + 1
 
     # Backup before writing — if the write crashes, we can recover
@@ -455,6 +460,7 @@ def run_qqq_momentum(strat, prices, today_str):
 
 def generate_html(state):
     now = state.get("last_run", "unknown")
+    last_market_date = state.get("last_run_date")
     strategies = state["strategies"]
 
     rows = ""
@@ -464,14 +470,39 @@ def generate_html(state):
                            key=lambda x: x[1]["equity"], reverse=True)
 
     FLAGSHIP = "S1_TQQQ_SOXL_20d_5d"
+    N_STRATS = len(strategies)
+    TOTAL_DEPOSITED = STARTING_CAPITAL * N_STRATS
+
+    # Portfolio totals
+    total_equity = sum(s["equity"] for s in strategies.values())
+    total_return = (total_equity / TOTAL_DEPOSITED - 1) * 100
+    n_open = sum(1 for s in strategies.values() if s.get("holding"))
+    n_cash = N_STRATS - n_open
+
+    # Find last trade date across all strategies (informational)
+    all_trade_dates = [t["date"] for s in strategies.values() for t in s["trades"]]
+    last_trade_date = max(all_trade_dates) if all_trade_dates else "—"
+    total_closed = sum(
+        1 for s in strategies.values()
+        for t in s["trades"] if t["action"] == "SELL"
+    )
+
+    if total_return > 0:
+        total_color = "#22c55e"
+    elif total_return < 0:
+        total_color = "#ef4444"
+    else:
+        total_color = "#a3a3a3"
 
     for sid, s in sorted_strats:
         eq = s["equity"]
         ret = (eq / STARTING_CAPITAL - 1) * 100
-        holding = s.get("holding") or "CASH"
-        n_trades = len([t for t in s["trades"] if t["action"] == "SELL"])
+        holding_ticker = s.get("holding")
+        n_closed = len([t for t in s["trades"] if t["action"] == "SELL"])
         wins = len([t for t in s["trades"] if t["action"] == "SELL" and t.get("pnl_pct", 0) > 0])
-        wr = (wins / n_trades * 100) if n_trades > 0 else 0
+
+        # Win rate: "—" when no closed trades, percent otherwise
+        wr_str = f"{(wins/n_closed*100):.0f}%" if n_closed > 0 else "—"
 
         if ret > 0:
             color = "#22c55e"
@@ -484,32 +515,91 @@ def generate_html(state):
         flag_badge = ' <span class="badge">BEST</span>' if is_flagship else ""
         row_class = ' class="flagship"' if is_flagship else ""
 
+        # Position cell: CASH (gray) or ticker + entry info
+        if holding_ticker:
+            entry_price = s.get("entry_price", 0)
+            entry_date = s.get("entry_date", "")
+            days_held = ""
+            if entry_date and last_market_date:
+                try:
+                    d1 = datetime.strptime(entry_date, "%Y-%m-%d")
+                    d2 = datetime.strptime(last_market_date, "%Y-%m-%d")
+                    n_days = (d2 - d1).days
+                    days_held = f" · {n_days}d" if n_days > 0 else " · today"
+                except Exception:
+                    pass
+
+            # Unrealized P/L: equity / (shares * entry_price) - 1
+            shares = s.get("shares", 0)
+            if entry_price > 0 and shares > 0:
+                entry_value = shares * entry_price
+                unr_pct = (eq / entry_value - 1) * 100
+                if unr_pct > 0:
+                    unr_color = "#22c55e"
+                elif unr_pct < 0:
+                    unr_color = "#ef4444"
+                else:
+                    unr_color = "#a3a3a3"
+                unr_str = f'<span style="color:{unr_color}">{unr_pct:+.1f}%</span>'
+            else:
+                unr_str = "—"
+
+            entry_str = f"${entry_price:,.2f}" if entry_price > 0 else "—"
+            position_cell = (
+                f'<strong>{holding_ticker}</strong>'
+                f'<span style="color:#737373;font-size:0.85em">{days_held}</span>'
+            )
+        else:
+            position_cell = '<span style="color:#737373">CASH</span>'
+            entry_str = "—"
+            unr_str = "—"
+
         rows += f"""
         <tr{row_class}>
             <td>{s['name']}{flag_badge}</td>
-            <td><strong>{holding}</strong></td>
+            <td>{position_cell}</td>
+            <td style="color:#a3a3a3">{entry_str}</td>
+            <td>{unr_str}</td>
             <td style="color:{color};font-weight:bold">${eq:,.0f}</td>
             <td style="color:{color};font-weight:bold">{ret:+.1f}%</td>
-            <td>{n_trades}</td>
-            <td>{wr:.0f}%</td>
+            <td>{n_closed}</td>
+            <td>{wr_str}</td>
         </tr>"""
 
         # Trade log for this strategy
         recent_trades = s["trades"][-10:]
         trade_rows = ""
-        for t in recent_trades:
-            pnl = t.get("pnl_pct", "")
-            pnl_str = f"{pnl:+.1f}%" if isinstance(pnl, (int, float)) and pnl != 0 else ""
-            pnl_color = "#22c55e" if isinstance(pnl, (int, float)) and pnl > 0 else "#ef4444" if isinstance(pnl, (int, float)) and pnl < 0 else "#888"
-            trade_rows += f"""
-            <tr>
-                <td>{t['date']}</td>
-                <td>{t['action']}</td>
-                <td>{t.get('ticker','')}</td>
-                <td>${t.get('price',0):,.2f}</td>
-                <td style="color:{pnl_color}">{pnl_str}</td>
-                <td>${t.get('equity',0):,.0f}</td>
-            </tr>"""
+        if not recent_trades:
+            trade_rows = (
+                '<tr><td colspan="6" style="color:#737373;font-style:italic;'
+                'text-align:center;padding:20px">'
+                'No trades yet — waiting for first signal.'
+                '</td></tr>'
+            )
+        else:
+            for t in recent_trades:
+                pnl = t.get("pnl_pct")
+                # Distinguish SELL (always show pnl, even 0.0%) from BUY (no pnl)
+                if t["action"] == "SELL" and isinstance(pnl, (int, float)):
+                    pnl_str = f"{pnl:+.1f}%"
+                    if pnl > 0:
+                        pnl_color = "#22c55e"
+                    elif pnl < 0:
+                        pnl_color = "#ef4444"
+                    else:
+                        pnl_color = "#a3a3a3"
+                else:
+                    pnl_str = ""
+                    pnl_color = "#888"
+                trade_rows += f"""
+                <tr>
+                    <td>{t['date']}</td>
+                    <td>{t['action']}</td>
+                    <td>{t.get('ticker','')}</td>
+                    <td>${t.get('price',0):,.2f}</td>
+                    <td style="color:{pnl_color}">{pnl_str}</td>
+                    <td>${t.get('equity',0):,.0f}</td>
+                </tr>"""
 
         flag_label = ' <span class="badge">BEST</span>' if is_flagship else ""
         detail_sections += f"""
@@ -547,12 +637,43 @@ def generate_html(state):
                          padding: 12px 16px; margin-bottom: 20px; font-size: 0.85em; color: #86efac; }}
         .note {{ color: #737373; font-size: 0.85em; margin-top: 30px;
                 padding-top: 15px; border-top: 1px solid #222; }}
+        .overview {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                    gap: 12px; margin-bottom: 25px; }}
+        .stat {{ background: #141414; border: 1px solid #222; border-radius: 6px;
+                padding: 12px 14px; }}
+        .stat .label {{ color: #737373; font-size: 0.75em; text-transform: uppercase;
+                       letter-spacing: 0.5px; margin-bottom: 4px; }}
+        .stat .value {{ color: #fff; font-size: 1.4em; font-weight: 600; }}
+        .stat .sub {{ color: #737373; font-size: 0.75em; margin-top: 2px; }}
     </style>
 </head>
 <body>
     <h1>Paper Trader</h1>
     <div class="meta">Last updated: {now} | Run #{state.get('run_count', 0)} |
     Started: {state.get('created', 'unknown')}</div>
+
+    <div class="overview">
+        <div class="stat">
+            <div class="label">Total Equity</div>
+            <div class="value" style="color:{total_color}">${total_equity:,.0f}</div>
+            <div class="sub">of ${TOTAL_DEPOSITED:,.0f} deposited</div>
+        </div>
+        <div class="stat">
+            <div class="label">Total Return</div>
+            <div class="value" style="color:{total_color}">{total_return:+.1f}%</div>
+            <div class="sub">across {N_STRATS} strategies</div>
+        </div>
+        <div class="stat">
+            <div class="label">Positions</div>
+            <div class="value">{n_open} / {N_STRATS}</div>
+            <div class="sub">{n_cash} in cash</div>
+        </div>
+        <div class="stat">
+            <div class="label">Closed Trades</div>
+            <div class="value">{total_closed}</div>
+            <div class="sub">last: {last_trade_date}</div>
+        </div>
+    </div>
 
     <h2>Strategy Performance</h2>
     <div class="flagship-note">
@@ -562,8 +683,8 @@ def generate_html(state):
         (validated on 2023-2026 unseen data, monitored live before promotion).
     </div>
     <table>
-        <tr><th>Strategy</th><th>Holding</th><th>Equity</th><th>Return</th>
-        <th>Trades</th><th>Win Rate</th></tr>
+        <tr><th>Strategy</th><th>Position</th><th>Entry</th><th>Unrealized</th>
+        <th>Equity</th><th>Return</th><th>Closed</th><th>WR</th></tr>
         {rows}
     </table>
 
@@ -571,8 +692,11 @@ def generate_html(state):
     {detail_sections}
 
     <div class="note">
-        All trades are paper (simulated). Starting capital: $1,000 per strategy.
-        Data from Yahoo Finance. System checks daily, strategies evaluate on their own schedules.
+        All trades are paper (simulated). Starting capital: $1,000 per strategy
+        (${TOTAL_DEPOSITED:,.0f} total simulated deposit).
+        Data from Yahoo Finance. Strategies evaluate at their own check intervals;
+        "Closed" counts completed round-trip trades. "Unrealized" is the change since entry
+        on currently-open positions.
     </div>
 </body>
 </html>"""

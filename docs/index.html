@@ -26,12 +26,43 @@
                          padding: 12px 16px; margin-bottom: 20px; font-size: 0.85em; color: #86efac; }
         .note { color: #737373; font-size: 0.85em; margin-top: 30px;
                 padding-top: 15px; border-top: 1px solid #222; }
+        .overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                    gap: 12px; margin-bottom: 25px; }
+        .stat { background: #141414; border: 1px solid #222; border-radius: 6px;
+                padding: 12px 14px; }
+        .stat .label { color: #737373; font-size: 0.75em; text-transform: uppercase;
+                       letter-spacing: 0.5px; margin-bottom: 4px; }
+        .stat .value { color: #fff; font-size: 1.4em; font-weight: 600; }
+        .stat .sub { color: #737373; font-size: 0.75em; margin-top: 2px; }
     </style>
 </head>
 <body>
     <h1>Paper Trader</h1>
     <div class="meta">Last updated: None | Run #0 |
     Started: 2026-05-23 16:00</div>
+
+    <div class="overview">
+        <div class="stat">
+            <div class="label">Total Equity</div>
+            <div class="value" style="color:#a3a3a3">$8,000</div>
+            <div class="sub">of $8,000 deposited</div>
+        </div>
+        <div class="stat">
+            <div class="label">Total Return</div>
+            <div class="value" style="color:#a3a3a3">+0.0%</div>
+            <div class="sub">across 8 strategies</div>
+        </div>
+        <div class="stat">
+            <div class="label">Positions</div>
+            <div class="value">0 / 8</div>
+            <div class="sub">8 in cash</div>
+        </div>
+        <div class="stat">
+            <div class="label">Closed Trades</div>
+            <div class="value">0</div>
+            <div class="sub">last: —</div>
+        </div>
+    </div>
 
     <h2>Strategy Performance</h2>
     <div class="flagship-note">
@@ -41,72 +72,88 @@
         (validated on 2023-2026 unseen data, monitored live before promotion).
     </div>
     <table>
-        <tr><th>Strategy</th><th>Holding</th><th>Equity</th><th>Return</th>
-        <th>Trades</th><th>Win Rate</th></tr>
+        <tr><th>Strategy</th><th>Position</th><th>Entry</th><th>Unrealized</th>
+        <th>Equity</th><th>Return</th><th>Closed</th><th>WR</th></tr>
         
         <tr class="flagship">
             <td>TQQQ+SOXL 20d mom, 5d check <span class="badge">BEST</span></td>
-            <td><strong>CASH</strong></td>
+            <td><span style="color:#737373">CASH</span></td>
+            <td style="color:#a3a3a3">—</td>
+            <td>—</td>
             <td style="color:#a3a3a3;font-weight:bold">$1,000</td>
             <td style="color:#a3a3a3;font-weight:bold">+0.0%</td>
             <td>0</td>
-            <td>0%</td>
+            <td>—</td>
         </tr>
         <tr>
             <td>TQQQ+SOXL 30d mom, 10d check</td>
-            <td><strong>CASH</strong></td>
+            <td><span style="color:#737373">CASH</span></td>
+            <td style="color:#a3a3a3">—</td>
+            <td>—</td>
             <td style="color:#a3a3a3;font-weight:bold">$1,000</td>
             <td style="color:#a3a3a3;font-weight:bold">+0.0%</td>
             <td>0</td>
-            <td>0%</td>
+            <td>—</td>
         </tr>
         <tr>
             <td>TQQQ+SOXL 20d mom, 10d check</td>
-            <td><strong>CASH</strong></td>
+            <td><span style="color:#737373">CASH</span></td>
+            <td style="color:#a3a3a3">—</td>
+            <td>—</td>
             <td style="color:#a3a3a3;font-weight:bold">$1,000</td>
             <td style="color:#a3a3a3;font-weight:bold">+0.0%</td>
             <td>0</td>
-            <td>0%</td>
+            <td>—</td>
         </tr>
         <tr>
             <td>SPY RSI(2) mean reversion</td>
-            <td><strong>CASH</strong></td>
+            <td><span style="color:#737373">CASH</span></td>
+            <td style="color:#a3a3a3">—</td>
+            <td>—</td>
             <td style="color:#a3a3a3;font-weight:bold">$1,000</td>
             <td style="color:#a3a3a3;font-weight:bold">+0.0%</td>
             <td>0</td>
-            <td>0%</td>
+            <td>—</td>
         </tr>
         <tr>
             <td>QQQ 5d momentum, hold 20d</td>
-            <td><strong>CASH</strong></td>
+            <td><span style="color:#737373">CASH</span></td>
+            <td style="color:#a3a3a3">—</td>
+            <td>—</td>
             <td style="color:#a3a3a3;font-weight:bold">$1,000</td>
             <td style="color:#a3a3a3;font-weight:bold">+0.0%</td>
             <td>0</td>
-            <td>0%</td>
+            <td>—</td>
         </tr>
         <tr>
             <td>UPRO+FAS 20d mom, 5d check</td>
-            <td><strong>CASH</strong></td>
+            <td><span style="color:#737373">CASH</span></td>
+            <td style="color:#a3a3a3">—</td>
+            <td>—</td>
             <td style="color:#a3a3a3;font-weight:bold">$1,000</td>
             <td style="color:#a3a3a3;font-weight:bold">+0.0%</td>
             <td>0</td>
-            <td>0%</td>
+            <td>—</td>
         </tr>
         <tr>
             <td>KORU+NAIL+ERX 20d mom, 5d check</td>
-            <td><strong>CASH</strong></td>
+            <td><span style="color:#737373">CASH</span></td>
+            <td style="color:#a3a3a3">—</td>
+            <td>—</td>
             <td style="color:#a3a3a3;font-weight:bold">$1,000</td>
             <td style="color:#a3a3a3;font-weight:bold">+0.0%</td>
             <td>0</td>
-            <td>0%</td>
+            <td>—</td>
         </tr>
         <tr>
             <td>KORU+DPST 20d mom, 5d check</td>
-            <td><strong>CASH</strong></td>
+            <td><span style="color:#737373">CASH</span></td>
+            <td style="color:#a3a3a3">—</td>
+            <td>—</td>
             <td style="color:#a3a3a3;font-weight:bold">$1,000</td>
             <td style="color:#a3a3a3;font-weight:bold">+0.0%</td>
             <td>0</td>
-            <td>0%</td>
+            <td>—</td>
         </tr>
     </table>
 
@@ -115,47 +162,50 @@
         <h3>TQQQ+SOXL 20d mom, 5d check <span class="badge">BEST</span></h3>
         <table>
             <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
-            
+            <tr><td colspan="6" style="color:#737373;font-style:italic;text-align:center;padding:20px">No trades yet — waiting for first signal.</td></tr>
         </table>
         <h3>TQQQ+SOXL 30d mom, 10d check</h3>
         <table>
             <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
-            
+            <tr><td colspan="6" style="color:#737373;font-style:italic;text-align:center;padding:20px">No trades yet — waiting for first signal.</td></tr>
         </table>
         <h3>TQQQ+SOXL 20d mom, 10d check</h3>
         <table>
             <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
-            
+            <tr><td colspan="6" style="color:#737373;font-style:italic;text-align:center;padding:20px">No trades yet — waiting for first signal.</td></tr>
         </table>
         <h3>SPY RSI(2) mean reversion</h3>
         <table>
             <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
-            
+            <tr><td colspan="6" style="color:#737373;font-style:italic;text-align:center;padding:20px">No trades yet — waiting for first signal.</td></tr>
         </table>
         <h3>QQQ 5d momentum, hold 20d</h3>
         <table>
             <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
-            
+            <tr><td colspan="6" style="color:#737373;font-style:italic;text-align:center;padding:20px">No trades yet — waiting for first signal.</td></tr>
         </table>
         <h3>UPRO+FAS 20d mom, 5d check</h3>
         <table>
             <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
-            
+            <tr><td colspan="6" style="color:#737373;font-style:italic;text-align:center;padding:20px">No trades yet — waiting for first signal.</td></tr>
         </table>
         <h3>KORU+NAIL+ERX 20d mom, 5d check</h3>
         <table>
             <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
-            
+            <tr><td colspan="6" style="color:#737373;font-style:italic;text-align:center;padding:20px">No trades yet — waiting for first signal.</td></tr>
         </table>
         <h3>KORU+DPST 20d mom, 5d check</h3>
         <table>
             <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
-            
+            <tr><td colspan="6" style="color:#737373;font-style:italic;text-align:center;padding:20px">No trades yet — waiting for first signal.</td></tr>
         </table>
 
     <div class="note">
-        All trades are paper (simulated). Starting capital: $1,000 per strategy.
-        Data from Yahoo Finance. System checks daily, strategies evaluate on their own schedules.
+        All trades are paper (simulated). Starting capital: $1,000 per strategy
+        ($8,000 total simulated deposit).
+        Data from Yahoo Finance. Strategies evaluate at their own check intervals;
+        "Closed" counts completed round-trip trades. "Unrealized" is the change since entry
+        on currently-open positions.
     </div>
 </body>
 </html>
