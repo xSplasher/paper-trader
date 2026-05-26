@@ -459,7 +459,7 @@ def run_qqq_momentum(strat, prices, today_str):
 # ============================================================
 
 def generate_html(state):
-    now = state.get("last_run", "unknown")
+    now = state.get("last_run") or "never (no runs yet)"
     last_market_date = state.get("last_run_date")
     strategies = state["strategies"]
 
