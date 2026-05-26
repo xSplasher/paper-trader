@@ -487,6 +487,43 @@ def generate_html(state):
         for t in s["trades"] if t["action"] == "SELL"
     )
 
+    # Group strategies by check schedule for the schedule card.
+    # Merge strategies sharing the same frequency, even if their underlying
+    # rule differs — the rule is already visible in the strategy name.
+    schedule_groups = {}  # interval_label -> [strategy_short_id]
+    for sid, s in strategies.items():
+        short_id = sid.split('_')[0]  # e.g. "S1" from "S1_TQQQ_SOXL_20d_5d"
+        stype = s.get("type")
+        if stype == "momentum_rotation":
+            interval = s.get("check_interval", 5)
+            label = f"every {interval} trading days"
+        elif stype in ("rsi_reversion", "qqq_momentum"):
+            label = "daily"
+        else:
+            label = "unknown"
+        schedule_groups.setdefault(label, []).append(short_id)
+
+    # Sort groups: daily first, then by interval ascending
+    def group_sort_key(item):
+        label = item[0]
+        if "daily" in label:
+            return (0, label)
+        if "trading days" in label:
+            try:
+                n = int(label.split()[1])
+                return (1, n)
+            except Exception:
+                return (2, label)
+        return (3, label)
+
+    schedule_rows_html = ""
+    for label, sids in sorted(schedule_groups.items(), key=group_sort_key):
+        sids_str = ", ".join(sorted(sids))
+        schedule_rows_html += (
+            f'<tr><td style="color:#a3a3a3">{label}</td>'
+            f'<td><strong>{sids_str}</strong></td></tr>'
+        )
+
     if total_return > 0:
         total_color = "#22c55e"
     elif total_return < 0:
@@ -645,6 +682,13 @@ def generate_html(state):
                        letter-spacing: 0.5px; margin-bottom: 4px; }}
         .stat .value {{ color: #fff; font-size: 1.4em; font-weight: 600; }}
         .stat .sub {{ color: #737373; font-size: 0.75em; margin-top: 2px; }}
+        .schedule-card {{ background: #141414; border: 1px solid #222; border-radius: 6px;
+                         padding: 14px 16px; margin-bottom: 25px; }}
+        .schedule-header {{ color: #c0c0c0; font-size: 0.85em; line-height: 1.5;
+                           margin-bottom: 12px; }}
+        .schedule-table {{ margin-bottom: 0; font-size: 0.85em; }}
+        .schedule-table td {{ padding: 6px 12px; }}
+        .schedule-table th {{ padding: 6px 12px; }}
     </style>
 </head>
 <body>
@@ -673,6 +717,21 @@ def generate_html(state):
             <div class="value">{total_closed}</div>
             <div class="sub">last: {last_trade_date}</div>
         </div>
+    </div>
+
+    <h2>Update Schedule</h2>
+    <div class="schedule-card">
+        <div class="schedule-header">
+            All runs fire at <strong>3:30 PM ET</strong> every US trading day
+            (20:30 GMT during DST, 21:30 GMT during standard time).
+            On every run, <strong>equity &amp; P/L update for every strategy</strong>
+            (daily mark-to-market). Position decisions follow each strategy's own
+            check interval:
+        </div>
+        <table class="schedule-table">
+            <tr><th>Check frequency</th><th>Strategies</th></tr>
+            {schedule_rows_html}
+        </table>
     </div>
 
     <h2>Strategy Performance</h2>
