@@ -473,7 +473,12 @@ def generate_html(state):
         wins = len([t for t in s["trades"] if t["action"] == "SELL" and t.get("pnl_pct", 0) > 0])
         wr = (wins / n_trades * 100) if n_trades > 0 else 0
 
-        color = "#22c55e" if ret > 0 else "#ef4444"
+        if ret > 0:
+            color = "#22c55e"
+        elif ret < 0:
+            color = "#ef4444"
+        else:
+            color = "#a3a3a3"
 
         is_flagship = sid == FLAGSHIP
         flag_badge = ' <span class="badge">BEST</span>' if is_flagship else ""
