@@ -34,13 +34,7 @@
                        letter-spacing: 0.5px; margin-bottom: 4px; }
         .stat .value { color: #fff; font-size: 1.4em; font-weight: 600; }
         .stat .sub { color: #737373; font-size: 0.75em; margin-top: 2px; }
-        .schedule-card { background: #141414; border: 1px solid #222; border-radius: 6px;
-                         padding: 14px 16px; margin-bottom: 25px; }
-        .schedule-header { color: #c0c0c0; font-size: 0.85em; line-height: 1.5;
-                           margin-bottom: 12px; }
-        .schedule-table { margin-bottom: 0; font-size: 0.85em; }
-        .schedule-table td { padding: 6px 12px; }
-        .schedule-table th { padding: 6px 12px; }
+        .schedule-line { color: #a3a3a3; font-size: 0.85em; margin-bottom: 25px; }
     </style>
 </head>
 <body>
@@ -71,19 +65,8 @@
         </div>
     </div>
 
-    <h2>Update Schedule</h2>
-    <div class="schedule-card">
-        <div class="schedule-header">
-            All runs fire at <strong>3:30 PM ET</strong> every US trading day
-            (20:30 GMT during DST, 21:30 GMT during standard time).
-            On every run, <strong>equity &amp; P/L update for every strategy</strong>
-            (daily mark-to-market). Position decisions follow each strategy's own
-            check interval:
-        </div>
-        <table class="schedule-table">
-            <tr><th>Check frequency</th><th>Strategies</th></tr>
-            <tr><td style="color:#a3a3a3">daily</td><td><strong>S4, S5</strong></td></tr><tr><td style="color:#a3a3a3">every 5 trading days</td><td><strong>S1, S6, S7, S8</strong></td></tr><tr><td style="color:#a3a3a3">every 10 trading days</td><td><strong>S2, S3</strong></td></tr>
-        </table>
+    <div class="schedule-line">
+        Runs 3:30 PM ET daily · Equity updates daily · Checks: S4 S5 daily · S1 S6 S7 S8 every 5d · S2 S3 every 10d
     </div>
 
     <h2>Strategy Performance</h2>
