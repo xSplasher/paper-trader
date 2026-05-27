@@ -598,16 +598,20 @@ def generate_html(state):
                     pass
 
             # Unrealized P/L: equity / (shares * entry_price) - 1
+            # Treat sub-display-precision values as exactly zero so float-rounding
+            # noise (e.g. -1e-13%) doesn't show as "-0.0%" in red while another
+            # strategy shows "+0.0%" in green — both are effectively flat.
             shares = s.get("shares", 0)
             if entry_price > 0 and shares > 0:
                 entry_value = shares * entry_price
                 unr_pct = (eq / entry_value - 1) * 100
-                if unr_pct > 0:
-                    unr_color = "#22c55e"
-                elif unr_pct < 0:
-                    unr_color = "#ef4444"
-                else:
+                if abs(unr_pct) < 0.05:  # below 0.1% display precision
+                    unr_pct = 0.0
                     unr_color = "#a3a3a3"
+                elif unr_pct > 0:
+                    unr_color = "#22c55e"
+                else:
+                    unr_color = "#ef4444"
                 unr_str = f'<span style="color:{unr_color}">{unr_pct:+.1f}%</span>'
             else:
                 unr_str = "—"
