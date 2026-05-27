@@ -49,15 +49,40 @@ STARTING_CAPITAL = 1000.0
 # ============================================================
 
 def fetch_prices(ticker, days=60):
+    """Fetch daily OHLC data for a ticker. Robust to yfinance API changes:
+    - Pins auto_adjust=True explicitly (default changed across versions)
+    - Handles both MultiIndex and flat column structures
+    - Handles 'Date' / 'Datetime' / unnamed index from different yfinance versions"""
     start = (datetime.now() - timedelta(days=days)).strftime('%Y-%m-%d')
-    data = yf.download(ticker, start=start, progress=False)
+    data = yf.download(ticker, start=start, progress=False, auto_adjust=True)
+    if data is None or len(data) == 0:
+        raise ValueError(f"empty response from yfinance")
+
     if isinstance(data.columns, pd.MultiIndex):
         data.columns = data.columns.get_level_values(0)
+
     data = data.reset_index()
-    data = data.rename(columns={'Date': 'date', 'Close': 'close',
-                                 'High': 'high', 'Low': 'low', 'Open': 'open'})
+
+    # Locate the date column — yfinance versions differ
+    date_col = None
+    for candidate in ('Date', 'Datetime', 'date', 'datetime', 'index'):
+        if candidate in data.columns:
+            date_col = candidate
+            break
+    if date_col is None and len(data.columns) > 0:
+        # Last resort: assume first column post reset_index is the date
+        date_col = data.columns[0]
+
+    rename_map = {date_col: 'date', 'Close': 'close', 'Open': 'open',
+                  'High': 'high', 'Low': 'low'}
+    data = data.rename(columns={k: v for k, v in rename_map.items() if k in data.columns})
+
+    if 'date' not in data.columns or 'close' not in data.columns:
+        raise ValueError(f"missing required columns after rename. Got: {list(data.columns)}")
+
     data['date'] = pd.to_datetime(data['date']).dt.tz_localize(None)
-    return data[['date', 'close', 'open']].sort_values('date').reset_index(drop=True)
+    cols = ['date', 'close'] + (['open'] if 'open' in data.columns else [])
+    return data[cols].sort_values('date').reset_index(drop=True)
 
 
 def get_all_prices():
@@ -70,7 +95,7 @@ def get_all_prices():
             if len(df) > 0:
                 prices[t] = df
         except Exception as e:
-            print(f"  WARN: Failed to fetch {t}: {e}")
+            print(f"  WARN: Failed to fetch {t}: {type(e).__name__}: {e}")
     return prices
 
 
