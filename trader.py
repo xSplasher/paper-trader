@@ -753,16 +753,25 @@ def generate_html(state):
 
 def is_trading_day(prices):
     """Check if today is a real trading day by looking at the actual data.
-    If the latest price data is from today, the market is open.
-    If it's from yesterday or earlier, the market is closed (weekend/holiday)."""
-    today = datetime.now()
-    if today.weekday() >= 5:
+    If the latest price data is from today's ET market date, the market
+    is/was open. Uses ET because Yahoo returns market dates (ET), and
+    in CI the system clock is UTC — comparing UTC date vs ET market date
+    creates a false-skip after midnight UTC (= late evening ET prior day)."""
+    try:
+        from zoneinfo import ZoneInfo
+        today_et = datetime.now(ZoneInfo("America/New_York")).date()
+        today_wd = datetime.now(ZoneInfo("America/New_York")).weekday()
+    except Exception:
+        today_et = datetime.now().date()
+        today_wd = datetime.now().weekday()
+
+    if today_wd >= 5:
         return False
 
-    # Check if any ticker has data from today
+    # Check if any ticker has data from today's ET trading date
     for ticker, df in prices.items():
         latest_date = df.iloc[-1]['date'].date()
-        if latest_date == today.date():
+        if latest_date == today_et:
             return True
 
     # No ticker has today's data — market is closed (holiday)
