@@ -106,8 +106,15 @@ def compute_indicators(df):
     loss = -delta.where(delta < 0, 0.0)
     avg_gain = gain.rolling(2).mean()
     avg_loss = loss.rolling(2).mean()
+    # Standard RSI; handle div-by-zero so RSI is always defined:
+    # - no losses (avg_loss == 0) means only up days -> RSI = 100 (max overbought)
+    # - no gains (avg_gain == 0) means only down days -> RSI = 0 (max oversold)
+    # - both zero (no movement) -> RSI = 50 (neutral)
     rs = avg_gain / avg_loss.replace(0, np.nan)
     df['rsi_2'] = 100 - (100 / (1 + rs))
+    df.loc[(avg_loss == 0) & (avg_gain > 0), 'rsi_2'] = 100
+    df.loc[(avg_gain == 0) & (avg_loss > 0), 'rsi_2'] = 0
+    df.loc[(avg_gain == 0) & (avg_loss == 0), 'rsi_2'] = 50
     return df
 
 
