@@ -789,9 +789,13 @@ def main():
             print(f"Weekend ({eastern.strftime('%A')}). Skipping.")
             return
 
-        # Only run between 3:15 PM and 4:15 PM ET
-        if et_total < 15 * 60 + 15 or et_total > 16 * 60 + 15:
-            print(f"Outside trading window (current ET: {eastern.strftime('%I:%M %p')}). Skipping.")
+        # Allow any run after 3:15 PM ET on a trading day. The lower bound
+        # blocks premarket execution (so we don't trade on incomplete data).
+        # No upper bound: GitHub Actions cron can be delayed 1-2+ hours,
+        # and running AFTER market close is fine — Yahoo's "Close" by then
+        # is the actual closing price, which matches MOC-order execution.
+        if et_total < 15 * 60 + 15:
+            print(f"Before trading window (current ET: {eastern.strftime('%I:%M %p')}). Skipping.")
             return
 
         print(f"Eastern time: {eastern.strftime('%I:%M %p')} - within trading window.")
