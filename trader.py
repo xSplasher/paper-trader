@@ -310,6 +310,19 @@ def save_state(state):
         state["last_run"] = datetime.now().strftime('%Y-%m-%d %H:%M UTC')
     state["run_count"] = state.get("run_count", 0) + 1
 
+    # Daily equity snapshot — used to compute "Today's Move" on the dashboard.
+    # Keep one entry per trading day; if the same day runs again (manual retrigger),
+    # overwrite. Cap history at 365 entries so state.json stays small.
+    total_eq = sum(s.get("equity", 0) for s in state.get("strategies", {}).values())
+    snapshot_date = state.get("last_run_date") or "unknown"
+    history = state.setdefault("history", [])
+    if history and history[-1].get("date") == snapshot_date:
+        history[-1]["total_equity"] = round(total_eq, 2)
+    else:
+        history.append({"date": snapshot_date, "total_equity": round(total_eq, 2)})
+    if len(history) > 365:
+        state["history"] = history[-365:]
+
     # Backup before writing — if the write crashes, we can recover
     backup = SCRIPT_DIR / "state.backup.json"
     if STATE_FILE.exists():
@@ -507,17 +520,31 @@ def generate_html(state):
 
     # Portfolio totals
     total_equity = sum(s["equity"] for s in strategies.values())
+    total_pnl_dollar = total_equity - TOTAL_DEPOSITED
     total_return = (total_equity / TOTAL_DEPOSITED - 1) * 100
-    n_open = sum(1 for s in strategies.values() if s.get("holding"))
-    n_cash = N_STRATS - n_open
 
-    # Find last trade date across all strategies (informational)
-    all_trade_dates = [t["date"] for s in strategies.values() for t in s["trades"]]
-    last_trade_date = max(all_trade_dates) if all_trade_dates else "—"
-    total_closed = sum(
-        1 for s in strategies.values()
-        for t in s["trades"] if t["action"] == "SELL"
-    )
+    # Today's move (from daily equity snapshots)
+    history = state.get("history", [])
+    if len(history) >= 2:
+        prev_eq = history[-2].get("total_equity", TOTAL_DEPOSITED)
+        today_move_dollar = total_equity - prev_eq
+        today_move_pct = (total_equity / prev_eq - 1) * 100 if prev_eq > 0 else 0.0
+        today_available = True
+    else:
+        today_move_dollar = 0.0
+        today_move_pct = 0.0
+        today_available = False
+
+    # Top and worst performers by $ P/L
+    perfs = []
+    for sid, s in strategies.items():
+        short_id = sid.split('_')[0]
+        pnl = s["equity"] - STARTING_CAPITAL
+        pct = (s["equity"] / STARTING_CAPITAL - 1) * 100
+        perfs.append((short_id, s["name"], s["equity"], pnl, pct))
+    perfs_sorted = sorted(perfs, key=lambda x: x[3], reverse=True)
+    top = perfs_sorted[0]
+    worst = perfs_sorted[-1]
 
     # Group strategies by check schedule for the schedule card.
     # Merge strategies sharing the same frequency, even if their underlying
@@ -555,12 +582,29 @@ def generate_html(state):
         schedule_parts.append(f"{sids_str} {short_label}")
     schedule_line = " · ".join(schedule_parts)
 
-    if total_return > 0:
-        total_color = "#22c55e"
-    elif total_return < 0:
-        total_color = "#ef4444"
-    else:
-        total_color = "#a3a3a3"
+    def pl_color(v):
+        if v > 0.5:
+            return "#22c55e"
+        if v < -0.5:
+            return "#ef4444"
+        return "#a3a3a3"
+
+    def fmt_dollar(v):
+        # Format as "+$50.30" / "-$23.45" / "$0.00"
+        if v > 0:
+            return f"+${v:,.2f}"
+        if v < 0:
+            return f"-${abs(v):,.2f}"
+        return "$0.00"
+
+    total_color = pl_color(total_pnl_dollar)
+    today_color = pl_color(today_move_dollar) if today_available else "#a3a3a3"
+    top_color = pl_color(top[3])
+    worst_color = pl_color(worst[3])
+    total_pnl_str = fmt_dollar(total_pnl_dollar)
+    today_move_str = fmt_dollar(today_move_dollar)
+    top_pnl_str = fmt_dollar(top[3])
+    worst_pnl_str = fmt_dollar(worst[3])
 
     for sid, s in sorted_strats:
         eq = s["equity"]
@@ -727,24 +771,24 @@ def generate_html(state):
 
     <div class="overview">
         <div class="stat">
-            <div class="label">Total Equity</div>
-            <div class="value" style="color:{total_color}">${total_equity:,.0f}</div>
-            <div class="sub">of ${TOTAL_DEPOSITED:,.0f} deposited</div>
+            <div class="label">Total P/L</div>
+            <div class="value" style="color:{total_color}">{total_pnl_str}</div>
+            <div class="sub">{total_return:+.1f}% · account ${total_equity:,.0f}</div>
         </div>
         <div class="stat">
-            <div class="label">Total Return</div>
-            <div class="value" style="color:{total_color}">{total_return:+.1f}%</div>
-            <div class="sub">across {N_STRATS} strategies</div>
+            <div class="label">Today's Move</div>
+            <div class="value" style="color:{today_color}">{today_move_str}</div>
+            <div class="sub">{today_move_pct:+.2f}%{'' if today_available else ' · (starts on 2nd run)'}</div>
         </div>
         <div class="stat">
-            <div class="label">Positions</div>
-            <div class="value">{n_open} / {N_STRATS}</div>
-            <div class="sub">{n_cash} in cash</div>
+            <div class="label">Top</div>
+            <div class="value" style="color:{top_color}">{top_pnl_str}</div>
+            <div class="sub">{top[0]} · {top[4]:+.1f}%</div>
         </div>
         <div class="stat">
-            <div class="label">Closed Trades</div>
-            <div class="value">{total_closed}</div>
-            <div class="sub">last: {last_trade_date}</div>
+            <div class="label">Worst</div>
+            <div class="value" style="color:{worst_color}">{worst_pnl_str}</div>
+            <div class="sub">{worst[0]} · {worst[4]:+.1f}%</div>
         </div>
     </div>
 
