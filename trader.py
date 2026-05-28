@@ -615,6 +615,7 @@ def generate_html(state):
             "history": s.get("history", []),
         }
     chart_history_json = _json.dumps(chart_history)
+    portfolio_history_json = _json.dumps(state.get("history", []))
 
     def pl_color(v):
         if v > 0.5:
@@ -807,6 +808,10 @@ def generate_html(state):
         .stat .value {{ color: #fff; font-size: 1.4em; font-weight: 600; }}
         .stat .sub {{ color: #737373; font-size: 0.75em; margin-top: 2px; }}
         .schedule-line {{ color: #a3a3a3; font-size: 0.85em; margin-bottom: 25px; }}
+        .portfolio-chart-card {{ background: #141414; border: 1px solid #222; border-radius: 6px;
+                                padding: 16px 18px; margin-bottom: 14px; }}
+        .portfolio-chart-header {{ display: flex; justify-content: space-between;
+                                  align-items: center; margin-bottom: 12px; }}
         .strategy-row:hover {{ background: #1a1a1a; }}
         .strategy-row.flagship:hover {{ background: #1a2a1a; }}
         .chart-toggle {{ color: #737373; font-size: 0.85em; margin-left: 6px;
@@ -850,6 +855,18 @@ def generate_html(state):
         </div>
     </div>
 
+    <div class="portfolio-chart-card">
+        <div class="portfolio-chart-header">
+            <span style="color:#c0c0c0;font-weight:500">Portfolio P/L over time</span>
+            <div class="chart-controls" style="margin-bottom:0">
+                <button class="period-btn portfolio-period active" data-period="day">Daily</button>
+                <button class="period-btn portfolio-period" data-period="week">Weekly</button>
+                <button class="period-btn portfolio-period" data-period="month">Monthly</button>
+            </div>
+        </div>
+        <div style="position:relative;height:280px"><canvas id="canvas-portfolio"></canvas></div>
+    </div>
+
     <div class="schedule-line">
         Runs 3:30 PM ET daily · Equity updates daily · Checks: {schedule_line}
     </div>
@@ -878,10 +895,13 @@ def generate_html(state):
     </div>
 
     <script id="strategy-history" type="application/json">{chart_history_json}</script>
+    <script id="portfolio-history" type="application/json">{portfolio_history_json}</script>
     <script>
     (function () {{
         const HISTORY = JSON.parse(document.getElementById('strategy-history').textContent);
+        const PORTFOLIO = JSON.parse(document.getElementById('portfolio-history').textContent);
         const STARTING_CAPITAL = {STARTING_CAPITAL};
+        const TOTAL_DEPOSITED = {TOTAL_DEPOSITED};
         const charts = {{}};  // id -> Chart instance
 
         function aggregate(points, period) {{
@@ -978,6 +998,83 @@ def generate_html(state):
             }});
         }}
 
+        function renderPortfolio(period) {{
+            const pts = aggregate(PORTFOLIO, period);
+            const labels = pts.map(p => p.date);
+            const pnl = pts.map(p => +(p.total_equity - TOTAL_DEPOSITED).toFixed(2));
+
+            const ctx = document.getElementById('canvas-portfolio');
+            if (!ctx) return;
+            if (charts['portfolio']) charts['portfolio'].destroy();
+
+            const last = pnl.length ? pnl[pnl.length - 1] : 0;
+            const lineColor = last > 0.5 ? '#22c55e' : last < -0.5 ? '#ef4444' : '#a3a3a3';
+            const fillColor = last > 0.5 ? 'rgba(34,197,94,0.10)' : last < -0.5 ? 'rgba(239,68,68,0.10)' : 'rgba(163,163,163,0.10)';
+
+            charts['portfolio'] = new Chart(ctx, {{
+                type: 'line',
+                data: {{
+                    labels: labels,
+                    datasets: [{{
+                        label: 'Portfolio P/L ($)',
+                        data: pnl,
+                        borderColor: lineColor,
+                        backgroundColor: fillColor,
+                        borderWidth: 2.5,
+                        fill: true,
+                        tension: 0.2,
+                        pointRadius: pts.length > 30 ? 0 : 3,
+                        pointHoverRadius: 5,
+                    }}]
+                }},
+                options: {{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {{
+                        legend: {{ display: false }},
+                        tooltip: {{
+                            callbacks: {{
+                                label: function (ctx) {{
+                                    const v = ctx.parsed.y;
+                                    const sign = v >= 0 ? '+' : '-';
+                                    return sign + '$' + Math.abs(v).toLocaleString(undefined, {{minimumFractionDigits: 2, maximumFractionDigits: 2}});
+                                }}
+                            }}
+                        }}
+                    }},
+                    scales: {{
+                        x: {{
+                            ticks: {{ color: '#737373', maxRotation: 0, autoSkipPadding: 12 }},
+                            grid: {{ color: '#1a1a1a' }}
+                        }},
+                        y: {{
+                            ticks: {{
+                                color: '#a3a3a3',
+                                callback: function (v) {{
+                                    return (v >= 0 ? '+$' : '-$') + Math.abs(v).toLocaleString();
+                                }}
+                            }},
+                            grid: {{
+                                color: function (ctx) {{ return ctx.tick.value === 0 ? '#444' : '#1a1a1a'; }}
+                            }}
+                        }}
+                    }}
+                }}
+            }});
+        }}
+
+        // Render portfolio chart on load
+        renderPortfolio('day');
+
+        // Portfolio period buttons
+        document.querySelectorAll('.portfolio-period').forEach(btn => {{
+            btn.addEventListener('click', function () {{
+                document.querySelectorAll('.portfolio-period').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderPortfolio(btn.dataset.period);
+            }});
+        }});
+
         // Click on a strategy row toggles its chart
         document.querySelectorAll('.strategy-row').forEach(row => {{
             row.addEventListener('click', function (e) {{
@@ -998,8 +1095,8 @@ def generate_html(state):
             }});
         }});
 
-        // Period button switching
-        document.querySelectorAll('.period-btn').forEach(btn => {{
+        // Per-strategy period button switching (excludes portfolio buttons)
+        document.querySelectorAll('.period-btn:not(.portfolio-period)').forEach(btn => {{
             btn.addEventListener('click', function (e) {{
                 e.stopPropagation();
                 const id = btn.dataset.stratId;
