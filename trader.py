@@ -659,7 +659,7 @@ def generate_html(state):
 
         is_flagship = sid == FLAGSHIP
         flag_badge = ' <span class="badge">BEST</span>' if is_flagship else ""
-        row_class = ' class="flagship"' if is_flagship else ""
+        row_classes = "strategy-row flagship" if is_flagship else "strategy-row"
 
         # Position cell: CASH (gray) or ticker + entry info
         if holding_ticker:
@@ -706,7 +706,7 @@ def generate_html(state):
 
         chart_id = sid.replace('_', '-')
         rows += f"""
-        <tr{row_class} class="strategy-row" data-strat-id="{chart_id}" style="cursor:pointer">
+        <tr class="{row_classes}" data-strat-id="{chart_id}" style="cursor:pointer">
             <td>{s['name']}{flag_badge} <span class="chart-toggle" id="toggle-{chart_id}">▸</span></td>
             <td>{position_cell}</td>
             <td style="color:#a3a3a3">{entry_str}</td>
