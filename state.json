@@ -1,8 +1,8 @@
 {
   "created": "2026-05-23 16:00",
-  "last_run": "2026-05-27 17:21 ET",
-  "last_run_date": "2026-05-27",
-  "run_count": 2,
+  "last_run": "2026-05-28 17:19 ET",
+  "last_run_date": "2026-05-28",
+  "run_count": 3,
   "strategies": {
     "S1_TQQQ_SOXL_20d_5d": {
       "name": "TQQQ+SOXL 20d mom, 5d check",
@@ -16,9 +16,9 @@
       "holding": "SOXL",
       "entry_price": 225.7899932861328,
       "entry_date": "2026-05-26",
-      "equity": 965.4103468230477,
+      "equity": 994.8625340457392,
       "shares": 4.428894236835147,
-      "days_since_check": 1,
+      "days_since_check": 2,
       "trades": [
         {
           "date": "2026-05-26",
@@ -41,9 +41,9 @@
       "holding": "SOXL",
       "entry_price": 225.7899932861328,
       "entry_date": "2026-05-26",
-      "equity": 965.4103468230477,
+      "equity": 994.8625340457392,
       "shares": 4.428894236835147,
-      "days_since_check": 1,
+      "days_since_check": 2,
       "trades": [
         {
           "date": "2026-05-26",
@@ -66,9 +66,9 @@
       "holding": "SOXL",
       "entry_price": 225.7899932861328,
       "entry_date": "2026-05-26",
-      "equity": 965.4103468230477,
+      "equity": 994.8625340457392,
       "shares": 4.428894236835147,
-      "days_since_check": 1,
+      "days_since_check": 2,
       "trades": [
         {
           "date": "2026-05-26",
@@ -96,9 +96,9 @@
       "holding": "QQQ",
       "entry_price": 730.280029296875,
       "entry_date": "2026-05-26",
-      "equity": 998.8634262795837,
+      "equity": 1007.2848031928036,
       "shares": 1.3693377333114471,
-      "days_in_trade": 1,
+      "days_in_trade": 2,
       "trades": [
         {
           "date": "2026-05-26",
@@ -121,9 +121,9 @@
       "holding": "UPRO",
       "entry_price": 145.86000061035156,
       "entry_date": "2026-05-26",
-      "equity": 999.8628529248784,
+      "equity": 1015.9742343432385,
       "shares": 6.855889180141898,
-      "days_since_check": 1,
+      "days_since_check": 2,
       "trades": [
         {
           "date": "2026-05-26",
@@ -147,9 +147,9 @@
       "holding": "KORU",
       "entry_price": 1014.97998046875,
       "entry_date": "2026-05-26",
-      "equity": 964.3441219158899,
+      "equity": 1083.8933043533898,
       "shares": 0.9852411074533394,
-      "days_since_check": 1,
+      "days_since_check": 2,
       "trades": [
         {
           "date": "2026-05-26",
@@ -172,9 +172,9 @@
       "holding": "KORU",
       "entry_price": 1014.97998046875,
       "entry_date": "2026-05-26",
-      "equity": 964.3441219158899,
+      "equity": 1083.8933043533898,
       "shares": 0.9852411074533394,
-      "days_since_check": 1,
+      "days_since_check": 2,
       "trades": [
         {
           "date": "2026-05-26",
@@ -190,6 +190,10 @@
     {
       "date": "2026-05-27",
       "total_equity": 7823.65
+    },
+    {
+      "date": "2026-05-28",
+      "total_equity": 8175.63
     }
   ]
 }
