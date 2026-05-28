@@ -355,7 +355,9 @@ def run_momentum_rotation(strat, prices, today_str):
             strat["equity"] = shares * current_price
 
     if strat["days_since_check"] < strat["check_interval"]:
-        return None
+        days_left = strat["check_interval"] - strat["days_since_check"]
+        held = strat.get("holding") or "CASH"
+        return f"HOLD {held} (next check in {days_left}d)"
 
     strat["days_since_check"] = 0
 
@@ -523,17 +525,22 @@ def generate_html(state):
     total_pnl_dollar = total_equity - TOTAL_DEPOSITED
     total_return = (total_equity / TOTAL_DEPOSITED - 1) * 100
 
-    # Today's move (from daily equity snapshots)
+    # Today's move (from daily equity snapshots).
+    # When only today's snapshot exists, fall back to the initial deposit as
+    # the "previous" equity — that's what the equity was prior to any trading.
     history = state.get("history", [])
     if len(history) >= 2:
         prev_eq = history[-2].get("total_equity", TOTAL_DEPOSITED)
-        today_move_dollar = total_equity - prev_eq
-        today_move_pct = (total_equity / prev_eq - 1) * 100 if prev_eq > 0 else 0.0
-        today_available = True
+        today_basis = "since previous run"
+    elif history:
+        prev_eq = TOTAL_DEPOSITED
+        today_basis = "since deposit"
     else:
-        today_move_dollar = 0.0
-        today_move_pct = 0.0
-        today_available = False
+        prev_eq = TOTAL_DEPOSITED
+        today_basis = "since deposit"
+    today_move_dollar = total_equity - prev_eq
+    today_move_pct = (total_equity / prev_eq - 1) * 100 if prev_eq > 0 else 0.0
+    today_available = True
 
     # Top and worst performers by $ P/L
     perfs = []
@@ -778,7 +785,7 @@ def generate_html(state):
         <div class="stat">
             <div class="label">Today's Move</div>
             <div class="value" style="color:{today_color}">{today_move_str}</div>
-            <div class="sub">{today_move_pct:+.2f}%{'' if today_available else ' · (starts on 2nd run)'}</div>
+            <div class="sub">{today_move_pct:+.2f}% · {today_basis}</div>
         </div>
         <div class="stat">
             <div class="label">Top</div>
