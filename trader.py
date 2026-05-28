@@ -310,11 +310,25 @@ def save_state(state):
         state["last_run"] = datetime.now().strftime('%Y-%m-%d %H:%M UTC')
     state["run_count"] = state.get("run_count", 0) + 1
 
-    # Daily equity snapshot — used to compute "Today's Move" on the dashboard.
-    # Keep one entry per trading day; if the same day runs again (manual retrigger),
-    # overwrite. Cap history at 365 entries so state.json stays small.
-    total_eq = sum(s.get("equity", 0) for s in state.get("strategies", {}).values())
+    # Daily equity snapshot — used to compute "Today's Move" and to draw
+    # the per-strategy chart on the dashboard. One entry per trading day;
+    # if the same day runs again (manual retrigger), overwrite.
+    # Cap history at 365 entries each so state.json stays small.
     snapshot_date = state.get("last_run_date") or "unknown"
+
+    # Per-strategy history
+    for s in state.get("strategies", {}).values():
+        s_hist = s.setdefault("history", [])
+        eq_round = round(s.get("equity", 0), 2)
+        if s_hist and s_hist[-1].get("date") == snapshot_date:
+            s_hist[-1]["equity"] = eq_round
+        else:
+            s_hist.append({"date": snapshot_date, "equity": eq_round})
+        if len(s_hist) > 365:
+            s["history"] = s_hist[-365:]
+
+    # Portfolio-level history
+    total_eq = sum(s.get("equity", 0) for s in state.get("strategies", {}).values())
     history = state.setdefault("history", [])
     if history and history[-1].get("date") == snapshot_date:
         history[-1]["total_equity"] = round(total_eq, 2)
@@ -589,6 +603,19 @@ def generate_html(state):
         schedule_parts.append(f"{sids_str} {short_label}")
     schedule_line = " · ".join(schedule_parts)
 
+    # Build per-strategy history JSON for client-side chart rendering.
+    # Use chart-friendly IDs (dashes instead of underscores) so we can target
+    # DOM elements directly with data-strat-id.
+    import json as _json
+    chart_history = {}
+    for sid, s in strategies.items():
+        chart_id = sid.replace('_', '-')
+        chart_history[chart_id] = {
+            "name": s["name"],
+            "history": s.get("history", []),
+        }
+    chart_history_json = _json.dumps(chart_history)
+
     def pl_color(v):
         if v > 0.5:
             return "#22c55e"
@@ -677,9 +704,10 @@ def generate_html(state):
             entry_str = "—"
             unr_str = "—"
 
+        chart_id = sid.replace('_', '-')
         rows += f"""
-        <tr{row_class}>
-            <td>{s['name']}{flag_badge}</td>
+        <tr{row_class} class="strategy-row" data-strat-id="{chart_id}" style="cursor:pointer">
+            <td>{s['name']}{flag_badge} <span class="chart-toggle" id="toggle-{chart_id}">▸</span></td>
             <td>{position_cell}</td>
             <td style="color:#a3a3a3">{entry_str}</td>
             <td>{unr_str}</td>
@@ -687,6 +715,16 @@ def generate_html(state):
             <td style="color:{color};font-weight:bold">{ret:+.1f}%</td>
             <td>{n_closed}</td>
             <td>{wr_str}</td>
+        </tr>
+        <tr class="chart-row" id="chart-row-{chart_id}" style="display:none">
+            <td colspan="8" style="padding:18px 20px;background:#0e0e0e">
+                <div class="chart-controls">
+                    <button class="period-btn active" data-strat-id="{chart_id}" data-period="day">Daily</button>
+                    <button class="period-btn" data-strat-id="{chart_id}" data-period="week">Weekly</button>
+                    <button class="period-btn" data-strat-id="{chart_id}" data-period="month">Monthly</button>
+                </div>
+                <div style="position:relative;height:240px"><canvas id="canvas-{chart_id}"></canvas></div>
+            </td>
         </tr>"""
 
         # Trade log for this strategy
@@ -769,7 +807,20 @@ def generate_html(state):
         .stat .value {{ color: #fff; font-size: 1.4em; font-weight: 600; }}
         .stat .sub {{ color: #737373; font-size: 0.75em; margin-top: 2px; }}
         .schedule-line {{ color: #a3a3a3; font-size: 0.85em; margin-bottom: 25px; }}
+        .strategy-row:hover {{ background: #1a1a1a; }}
+        .strategy-row.flagship:hover {{ background: #1a2a1a; }}
+        .chart-toggle {{ color: #737373; font-size: 0.85em; margin-left: 6px;
+                        transition: transform 0.15s ease; display: inline-block; }}
+        .chart-toggle.open {{ transform: rotate(90deg); color: #c0c0c0; }}
+        .chart-controls {{ margin-bottom: 12px; display: flex; gap: 6px; }}
+        .period-btn {{ background: #1a1a1a; color: #a3a3a3; border: 1px solid #2a2a2a;
+                      border-radius: 4px; padding: 4px 12px; font-size: 0.8em;
+                      cursor: pointer; font-family: inherit; }}
+        .period-btn:hover {{ background: #222; color: #fff; }}
+        .period-btn.active {{ background: #22c55e; color: #000; border-color: #22c55e;
+                             font-weight: 600; }}
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <h1>Paper Trader</h1>
@@ -822,10 +873,146 @@ def generate_html(state):
     <div class="note">
         All trades are paper (simulated). Starting capital: $1,000 per strategy
         (${TOTAL_DEPOSITED:,.0f} total simulated deposit).
-        Data from Yahoo Finance. Strategies evaluate at their own check intervals;
-        "Closed" counts completed round-trip trades. "Unrealized" is the change since entry
-        on currently-open positions.
+        Data from Yahoo Finance. Strategies evaluate at their own check intervals.
+        Click any strategy row to view its P/L history over time.
     </div>
+
+    <script id="strategy-history" type="application/json">{chart_history_json}</script>
+    <script>
+    (function () {{
+        const HISTORY = JSON.parse(document.getElementById('strategy-history').textContent);
+        const STARTING_CAPITAL = {STARTING_CAPITAL};
+        const charts = {{}};  // id -> Chart instance
+
+        function aggregate(points, period) {{
+            // points: [{{date, equity}}, ...] ordered by date
+            // period: 'day' | 'week' | 'month' -> keep last point per bucket
+            if (period === 'day' || points.length <= 1) return points;
+            const buckets = {{}};
+            const order = [];
+            points.forEach(p => {{
+                const d = new Date(p.date + 'T00:00:00Z');
+                let key;
+                if (period === 'week') {{
+                    // ISO week: year-week
+                    const tmp = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+                    const dayNum = (tmp.getUTCDay() + 6) % 7;
+                    tmp.setUTCDate(tmp.getUTCDate() - dayNum + 3);
+                    const firstThu = new Date(Date.UTC(tmp.getUTCFullYear(), 0, 4));
+                    const week = 1 + Math.round(((tmp - firstThu) / 86400000 - 3 + ((firstThu.getUTCDay() + 6) % 7)) / 7);
+                    key = tmp.getUTCFullYear() + '-W' + String(week).padStart(2, '0');
+                }} else {{ // month
+                    key = d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0');
+                }}
+                if (!(key in buckets)) order.push(key);
+                buckets[key] = p;  // overwrites; last one wins (sorted input)
+            }});
+            return order.map(k => buckets[k]);
+        }}
+
+        function renderChart(id, period) {{
+            const data = HISTORY[id];
+            if (!data) return;
+            const pts = aggregate(data.history || [], period);
+            const labels = pts.map(p => p.date);
+            const pnl = pts.map(p => +(p.equity - STARTING_CAPITAL).toFixed(2));
+
+            const ctx = document.getElementById('canvas-' + id);
+            if (!ctx) return;
+            if (charts[id]) charts[id].destroy();
+
+            // Color the line based on overall direction
+            const last = pnl.length ? pnl[pnl.length - 1] : 0;
+            const lineColor = last > 0.5 ? '#22c55e' : last < -0.5 ? '#ef4444' : '#a3a3a3';
+            const fillColor = last > 0.5 ? 'rgba(34,197,94,0.10)' : last < -0.5 ? 'rgba(239,68,68,0.10)' : 'rgba(163,163,163,0.10)';
+
+            charts[id] = new Chart(ctx, {{
+                type: 'line',
+                data: {{
+                    labels: labels,
+                    datasets: [{{
+                        label: 'P/L ($)',
+                        data: pnl,
+                        borderColor: lineColor,
+                        backgroundColor: fillColor,
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.2,
+                        pointRadius: pts.length > 30 ? 0 : 3,
+                        pointHoverRadius: 5,
+                    }}]
+                }},
+                options: {{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {{
+                        legend: {{ display: false }},
+                        tooltip: {{
+                            callbacks: {{
+                                label: function (ctx) {{
+                                    const v = ctx.parsed.y;
+                                    const sign = v >= 0 ? '+' : '-';
+                                    return sign + '$' + Math.abs(v).toLocaleString(undefined, {{minimumFractionDigits: 2, maximumFractionDigits: 2}});
+                                }}
+                            }}
+                        }}
+                    }},
+                    scales: {{
+                        x: {{
+                            ticks: {{ color: '#737373', maxRotation: 0, autoSkipPadding: 12 }},
+                            grid: {{ color: '#1a1a1a' }}
+                        }},
+                        y: {{
+                            ticks: {{
+                                color: '#a3a3a3',
+                                callback: function (v) {{
+                                    return (v >= 0 ? '+$' : '-$') + Math.abs(v).toLocaleString();
+                                }}
+                            }},
+                            grid: {{
+                                color: function (ctx) {{ return ctx.tick.value === 0 ? '#444' : '#1a1a1a'; }}
+                            }}
+                        }}
+                    }}
+                }}
+            }});
+        }}
+
+        // Click on a strategy row toggles its chart
+        document.querySelectorAll('.strategy-row').forEach(row => {{
+            row.addEventListener('click', function (e) {{
+                // Don't trigger when clicking on links inside the row (none today, but safe)
+                if (e.target.tagName === 'A') return;
+                const id = row.dataset.stratId;
+                const chartRow = document.getElementById('chart-row-' + id);
+                const toggle = document.getElementById('toggle-' + id);
+                if (!chartRow) return;
+                if (chartRow.style.display === 'none') {{
+                    chartRow.style.display = '';
+                    if (toggle) toggle.classList.add('open');
+                    renderChart(id, 'day');
+                }} else {{
+                    chartRow.style.display = 'none';
+                    if (toggle) toggle.classList.remove('open');
+                }}
+            }});
+        }});
+
+        // Period button switching
+        document.querySelectorAll('.period-btn').forEach(btn => {{
+            btn.addEventListener('click', function (e) {{
+                e.stopPropagation();
+                const id = btn.dataset.stratId;
+                const period = btn.dataset.period;
+                document.querySelectorAll('.period-btn[data-strat-id="' + id + '"]').forEach(b => {{
+                    b.classList.remove('active');
+                }});
+                btn.classList.add('active');
+                renderChart(id, period);
+            }});
+        }});
+    }})();
+    </script>
 </body>
 </html>"""
 

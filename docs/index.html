@@ -35,7 +35,20 @@
         .stat .value { color: #fff; font-size: 1.4em; font-weight: 600; }
         .stat .sub { color: #737373; font-size: 0.75em; margin-top: 2px; }
         .schedule-line { color: #a3a3a3; font-size: 0.85em; margin-bottom: 25px; }
+        .strategy-row:hover { background: #1a1a1a; }
+        .strategy-row.flagship:hover { background: #1a2a1a; }
+        .chart-toggle { color: #737373; font-size: 0.85em; margin-left: 6px;
+                        transition: transform 0.15s ease; display: inline-block; }
+        .chart-toggle.open { transform: rotate(90deg); color: #c0c0c0; }
+        .chart-controls { margin-bottom: 12px; display: flex; gap: 6px; }
+        .period-btn { background: #1a1a1a; color: #a3a3a3; border: 1px solid #2a2a2a;
+                      border-radius: 4px; padding: 4px 12px; font-size: 0.8em;
+                      cursor: pointer; font-family: inherit; }
+        .period-btn:hover { background: #222; color: #fff; }
+        .period-btn.active { background: #22c55e; color: #000; border-color: #22c55e;
+                             font-weight: 600; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <h1>Paper Trader</h1>
@@ -80,8 +93,8 @@
         <tr><th>Strategy</th><th>Position</th><th>Entry</th><th>Unrealized</th>
         <th>Equity</th><th>Return</th><th>Closed</th><th>WR</th></tr>
         
-        <tr>
-            <td>KORU+NAIL+ERX 20d mom, 5d check</td>
+        <tr class="strategy-row" data-strat-id="S7-KORU-NAIL-ERX-20d-5d" style="cursor:pointer">
+            <td>KORU+NAIL+ERX 20d mom, 5d check <span class="chart-toggle" id="toggle-S7-KORU-NAIL-ERX-20d-5d">▸</span></td>
             <td><strong>KORU</strong><span style="color:#737373;font-size:0.85em"> · 2d</span></td>
             <td style="color:#a3a3a3">$1,014.98</td>
             <td><span style="color:#22c55e">+8.4%</span></td>
@@ -90,8 +103,18 @@
             <td>0</td>
             <td>—</td>
         </tr>
-        <tr>
-            <td>KORU+DPST 20d mom, 5d check</td>
+        <tr class="chart-row" id="chart-row-S7-KORU-NAIL-ERX-20d-5d" style="display:none">
+            <td colspan="8" style="padding:18px 20px;background:#0e0e0e">
+                <div class="chart-controls">
+                    <button class="period-btn active" data-strat-id="S7-KORU-NAIL-ERX-20d-5d" data-period="day">Daily</button>
+                    <button class="period-btn" data-strat-id="S7-KORU-NAIL-ERX-20d-5d" data-period="week">Weekly</button>
+                    <button class="period-btn" data-strat-id="S7-KORU-NAIL-ERX-20d-5d" data-period="month">Monthly</button>
+                </div>
+                <div style="position:relative;height:240px"><canvas id="canvas-S7-KORU-NAIL-ERX-20d-5d"></canvas></div>
+            </td>
+        </tr>
+        <tr class="strategy-row" data-strat-id="S8-KORU-DPST-20d-5d" style="cursor:pointer">
+            <td>KORU+DPST 20d mom, 5d check <span class="chart-toggle" id="toggle-S8-KORU-DPST-20d-5d">▸</span></td>
             <td><strong>KORU</strong><span style="color:#737373;font-size:0.85em"> · 2d</span></td>
             <td style="color:#a3a3a3">$1,014.98</td>
             <td><span style="color:#22c55e">+8.4%</span></td>
@@ -100,8 +123,18 @@
             <td>0</td>
             <td>—</td>
         </tr>
-        <tr>
-            <td>UPRO+FAS 20d mom, 5d check</td>
+        <tr class="chart-row" id="chart-row-S8-KORU-DPST-20d-5d" style="display:none">
+            <td colspan="8" style="padding:18px 20px;background:#0e0e0e">
+                <div class="chart-controls">
+                    <button class="period-btn active" data-strat-id="S8-KORU-DPST-20d-5d" data-period="day">Daily</button>
+                    <button class="period-btn" data-strat-id="S8-KORU-DPST-20d-5d" data-period="week">Weekly</button>
+                    <button class="period-btn" data-strat-id="S8-KORU-DPST-20d-5d" data-period="month">Monthly</button>
+                </div>
+                <div style="position:relative;height:240px"><canvas id="canvas-S8-KORU-DPST-20d-5d"></canvas></div>
+            </td>
+        </tr>
+        <tr class="strategy-row" data-strat-id="S6-UPRO-FAS-20d-5d" style="cursor:pointer">
+            <td>UPRO+FAS 20d mom, 5d check <span class="chart-toggle" id="toggle-S6-UPRO-FAS-20d-5d">▸</span></td>
             <td><strong>UPRO</strong><span style="color:#737373;font-size:0.85em"> · 2d</span></td>
             <td style="color:#a3a3a3">$145.86</td>
             <td><span style="color:#22c55e">+1.6%</span></td>
@@ -110,8 +143,18 @@
             <td>0</td>
             <td>—</td>
         </tr>
-        <tr>
-            <td>QQQ 5d momentum, hold 20d</td>
+        <tr class="chart-row" id="chart-row-S6-UPRO-FAS-20d-5d" style="display:none">
+            <td colspan="8" style="padding:18px 20px;background:#0e0e0e">
+                <div class="chart-controls">
+                    <button class="period-btn active" data-strat-id="S6-UPRO-FAS-20d-5d" data-period="day">Daily</button>
+                    <button class="period-btn" data-strat-id="S6-UPRO-FAS-20d-5d" data-period="week">Weekly</button>
+                    <button class="period-btn" data-strat-id="S6-UPRO-FAS-20d-5d" data-period="month">Monthly</button>
+                </div>
+                <div style="position:relative;height:240px"><canvas id="canvas-S6-UPRO-FAS-20d-5d"></canvas></div>
+            </td>
+        </tr>
+        <tr class="strategy-row" data-strat-id="S5-QQQ-MOM" style="cursor:pointer">
+            <td>QQQ 5d momentum, hold 20d <span class="chart-toggle" id="toggle-S5-QQQ-MOM">▸</span></td>
             <td><strong>QQQ</strong><span style="color:#737373;font-size:0.85em"> · 2d</span></td>
             <td style="color:#a3a3a3">$730.28</td>
             <td><span style="color:#22c55e">+0.7%</span></td>
@@ -120,8 +163,18 @@
             <td>0</td>
             <td>—</td>
         </tr>
-        <tr>
-            <td>SPY RSI(2) mean reversion</td>
+        <tr class="chart-row" id="chart-row-S5-QQQ-MOM" style="display:none">
+            <td colspan="8" style="padding:18px 20px;background:#0e0e0e">
+                <div class="chart-controls">
+                    <button class="period-btn active" data-strat-id="S5-QQQ-MOM" data-period="day">Daily</button>
+                    <button class="period-btn" data-strat-id="S5-QQQ-MOM" data-period="week">Weekly</button>
+                    <button class="period-btn" data-strat-id="S5-QQQ-MOM" data-period="month">Monthly</button>
+                </div>
+                <div style="position:relative;height:240px"><canvas id="canvas-S5-QQQ-MOM"></canvas></div>
+            </td>
+        </tr>
+        <tr class="strategy-row" data-strat-id="S4-SPY-RSI" style="cursor:pointer">
+            <td>SPY RSI(2) mean reversion <span class="chart-toggle" id="toggle-S4-SPY-RSI">▸</span></td>
             <td><span style="color:#737373">CASH</span></td>
             <td style="color:#a3a3a3">—</td>
             <td>—</td>
@@ -130,8 +183,18 @@
             <td>0</td>
             <td>—</td>
         </tr>
-        <tr class="flagship">
-            <td>TQQQ+SOXL 20d mom, 5d check <span class="badge">BEST</span></td>
+        <tr class="chart-row" id="chart-row-S4-SPY-RSI" style="display:none">
+            <td colspan="8" style="padding:18px 20px;background:#0e0e0e">
+                <div class="chart-controls">
+                    <button class="period-btn active" data-strat-id="S4-SPY-RSI" data-period="day">Daily</button>
+                    <button class="period-btn" data-strat-id="S4-SPY-RSI" data-period="week">Weekly</button>
+                    <button class="period-btn" data-strat-id="S4-SPY-RSI" data-period="month">Monthly</button>
+                </div>
+                <div style="position:relative;height:240px"><canvas id="canvas-S4-SPY-RSI"></canvas></div>
+            </td>
+        </tr>
+        <tr class="flagship" class="strategy-row" data-strat-id="S1-TQQQ-SOXL-20d-5d" style="cursor:pointer">
+            <td>TQQQ+SOXL 20d mom, 5d check <span class="badge">BEST</span> <span class="chart-toggle" id="toggle-S1-TQQQ-SOXL-20d-5d">▸</span></td>
             <td><strong>SOXL</strong><span style="color:#737373;font-size:0.85em"> · 2d</span></td>
             <td style="color:#a3a3a3">$225.79</td>
             <td><span style="color:#ef4444">-0.5%</span></td>
@@ -140,8 +203,18 @@
             <td>0</td>
             <td>—</td>
         </tr>
-        <tr>
-            <td>TQQQ+SOXL 30d mom, 10d check</td>
+        <tr class="chart-row" id="chart-row-S1-TQQQ-SOXL-20d-5d" style="display:none">
+            <td colspan="8" style="padding:18px 20px;background:#0e0e0e">
+                <div class="chart-controls">
+                    <button class="period-btn active" data-strat-id="S1-TQQQ-SOXL-20d-5d" data-period="day">Daily</button>
+                    <button class="period-btn" data-strat-id="S1-TQQQ-SOXL-20d-5d" data-period="week">Weekly</button>
+                    <button class="period-btn" data-strat-id="S1-TQQQ-SOXL-20d-5d" data-period="month">Monthly</button>
+                </div>
+                <div style="position:relative;height:240px"><canvas id="canvas-S1-TQQQ-SOXL-20d-5d"></canvas></div>
+            </td>
+        </tr>
+        <tr class="strategy-row" data-strat-id="S2-TQQQ-SOXL-30d-10d" style="cursor:pointer">
+            <td>TQQQ+SOXL 30d mom, 10d check <span class="chart-toggle" id="toggle-S2-TQQQ-SOXL-30d-10d">▸</span></td>
             <td><strong>SOXL</strong><span style="color:#737373;font-size:0.85em"> · 2d</span></td>
             <td style="color:#a3a3a3">$225.79</td>
             <td><span style="color:#ef4444">-0.5%</span></td>
@@ -150,8 +223,18 @@
             <td>0</td>
             <td>—</td>
         </tr>
-        <tr>
-            <td>TQQQ+SOXL 20d mom, 10d check</td>
+        <tr class="chart-row" id="chart-row-S2-TQQQ-SOXL-30d-10d" style="display:none">
+            <td colspan="8" style="padding:18px 20px;background:#0e0e0e">
+                <div class="chart-controls">
+                    <button class="period-btn active" data-strat-id="S2-TQQQ-SOXL-30d-10d" data-period="day">Daily</button>
+                    <button class="period-btn" data-strat-id="S2-TQQQ-SOXL-30d-10d" data-period="week">Weekly</button>
+                    <button class="period-btn" data-strat-id="S2-TQQQ-SOXL-30d-10d" data-period="month">Monthly</button>
+                </div>
+                <div style="position:relative;height:240px"><canvas id="canvas-S2-TQQQ-SOXL-30d-10d"></canvas></div>
+            </td>
+        </tr>
+        <tr class="strategy-row" data-strat-id="S3-TQQQ-SOXL-20d-10d" style="cursor:pointer">
+            <td>TQQQ+SOXL 20d mom, 10d check <span class="chart-toggle" id="toggle-S3-TQQQ-SOXL-20d-10d">▸</span></td>
             <td><strong>SOXL</strong><span style="color:#737373;font-size:0.85em"> · 2d</span></td>
             <td style="color:#a3a3a3">$225.79</td>
             <td><span style="color:#ef4444">-0.5%</span></td>
@@ -159,6 +242,16 @@
             <td style="color:#ef4444;font-weight:bold">-0.5%</td>
             <td>0</td>
             <td>—</td>
+        </tr>
+        <tr class="chart-row" id="chart-row-S3-TQQQ-SOXL-20d-10d" style="display:none">
+            <td colspan="8" style="padding:18px 20px;background:#0e0e0e">
+                <div class="chart-controls">
+                    <button class="period-btn active" data-strat-id="S3-TQQQ-SOXL-20d-10d" data-period="day">Daily</button>
+                    <button class="period-btn" data-strat-id="S3-TQQQ-SOXL-20d-10d" data-period="week">Weekly</button>
+                    <button class="period-btn" data-strat-id="S3-TQQQ-SOXL-20d-10d" data-period="month">Monthly</button>
+                </div>
+                <div style="position:relative;height:240px"><canvas id="canvas-S3-TQQQ-SOXL-20d-10d"></canvas></div>
+            </td>
         </tr>
     </table>
 
@@ -264,9 +357,145 @@
     <div class="note">
         All trades are paper (simulated). Starting capital: $1,000 per strategy
         ($8,000 total simulated deposit).
-        Data from Yahoo Finance. Strategies evaluate at their own check intervals;
-        "Closed" counts completed round-trip trades. "Unrealized" is the change since entry
-        on currently-open positions.
+        Data from Yahoo Finance. Strategies evaluate at their own check intervals.
+        Click any strategy row to view its P/L history over time.
     </div>
+
+    <script id="strategy-history" type="application/json">{"S1-TQQQ-SOXL-20d-5d": {"name": "TQQQ+SOXL 20d mom, 5d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 965.41}, {"date": "2026-05-28", "equity": 994.86}]}, "S2-TQQQ-SOXL-30d-10d": {"name": "TQQQ+SOXL 30d mom, 10d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 965.41}, {"date": "2026-05-28", "equity": 994.86}]}, "S3-TQQQ-SOXL-20d-10d": {"name": "TQQQ+SOXL 20d mom, 10d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 965.41}, {"date": "2026-05-28", "equity": 994.86}]}, "S4-SPY-RSI": {"name": "SPY RSI(2) mean reversion", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 1000.0}, {"date": "2026-05-28", "equity": 1000.0}]}, "S5-QQQ-MOM": {"name": "QQQ 5d momentum, hold 20d", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 998.86}, {"date": "2026-05-28", "equity": 1007.28}]}, "S6-UPRO-FAS-20d-5d": {"name": "UPRO+FAS 20d mom, 5d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 999.86}, {"date": "2026-05-28", "equity": 1015.97}]}, "S7-KORU-NAIL-ERX-20d-5d": {"name": "KORU+NAIL+ERX 20d mom, 5d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 964.34}, {"date": "2026-05-28", "equity": 1083.89}]}, "S8-KORU-DPST-20d-5d": {"name": "KORU+DPST 20d mom, 5d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 964.34}, {"date": "2026-05-28", "equity": 1083.89}]}}</script>
+    <script>
+    (function () {
+        const HISTORY = JSON.parse(document.getElementById('strategy-history').textContent);
+        const STARTING_CAPITAL = 1000.0;
+        const charts = {};  // id -> Chart instance
+
+        function aggregate(points, period) {
+            // points: [{date, equity}, ...] ordered by date
+            // period: 'day' | 'week' | 'month' -> keep last point per bucket
+            if (period === 'day' || points.length <= 1) return points;
+            const buckets = {};
+            const order = [];
+            points.forEach(p => {
+                const d = new Date(p.date + 'T00:00:00Z');
+                let key;
+                if (period === 'week') {
+                    // ISO week: year-week
+                    const tmp = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+                    const dayNum = (tmp.getUTCDay() + 6) % 7;
+                    tmp.setUTCDate(tmp.getUTCDate() - dayNum + 3);
+                    const firstThu = new Date(Date.UTC(tmp.getUTCFullYear(), 0, 4));
+                    const week = 1 + Math.round(((tmp - firstThu) / 86400000 - 3 + ((firstThu.getUTCDay() + 6) % 7)) / 7);
+                    key = tmp.getUTCFullYear() + '-W' + String(week).padStart(2, '0');
+                } else { // month
+                    key = d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0');
+                }
+                if (!(key in buckets)) order.push(key);
+                buckets[key] = p;  // overwrites; last one wins (sorted input)
+            });
+            return order.map(k => buckets[k]);
+        }
+
+        function renderChart(id, period) {
+            const data = HISTORY[id];
+            if (!data) return;
+            const pts = aggregate(data.history || [], period);
+            const labels = pts.map(p => p.date);
+            const pnl = pts.map(p => +(p.equity - STARTING_CAPITAL).toFixed(2));
+
+            const ctx = document.getElementById('canvas-' + id);
+            if (!ctx) return;
+            if (charts[id]) charts[id].destroy();
+
+            // Color the line based on overall direction
+            const last = pnl.length ? pnl[pnl.length - 1] : 0;
+            const lineColor = last > 0.5 ? '#22c55e' : last < -0.5 ? '#ef4444' : '#a3a3a3';
+            const fillColor = last > 0.5 ? 'rgba(34,197,94,0.10)' : last < -0.5 ? 'rgba(239,68,68,0.10)' : 'rgba(163,163,163,0.10)';
+
+            charts[id] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'P/L ($)',
+                        data: pnl,
+                        borderColor: lineColor,
+                        backgroundColor: fillColor,
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.2,
+                        pointRadius: pts.length > 30 ? 0 : 3,
+                        pointHoverRadius: 5,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function (ctx) {
+                                    const v = ctx.parsed.y;
+                                    const sign = v >= 0 ? '+' : '-';
+                                    return sign + '$' + Math.abs(v).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#737373', maxRotation: 0, autoSkipPadding: 12 },
+                            grid: { color: '#1a1a1a' }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#a3a3a3',
+                                callback: function (v) {
+                                    return (v >= 0 ? '+$' : '-$') + Math.abs(v).toLocaleString();
+                                }
+                            },
+                            grid: {
+                                color: function (ctx) { return ctx.tick.value === 0 ? '#444' : '#1a1a1a'; }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Click on a strategy row toggles its chart
+        document.querySelectorAll('.strategy-row').forEach(row => {
+            row.addEventListener('click', function (e) {
+                // Don't trigger when clicking on links inside the row (none today, but safe)
+                if (e.target.tagName === 'A') return;
+                const id = row.dataset.stratId;
+                const chartRow = document.getElementById('chart-row-' + id);
+                const toggle = document.getElementById('toggle-' + id);
+                if (!chartRow) return;
+                if (chartRow.style.display === 'none') {
+                    chartRow.style.display = '';
+                    if (toggle) toggle.classList.add('open');
+                    renderChart(id, 'day');
+                } else {
+                    chartRow.style.display = 'none';
+                    if (toggle) toggle.classList.remove('open');
+                }
+            });
+        });
+
+        // Period button switching
+        document.querySelectorAll('.period-btn').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const id = btn.dataset.stratId;
+                const period = btn.dataset.period;
+                document.querySelectorAll('.period-btn[data-strat-id="' + id + '"]').forEach(b => {
+                    b.classList.remove('active');
+                });
+                btn.classList.add('active');
+                renderChart(id, period);
+            });
+        });
+    })();
+    </script>
 </body>
 </html>
