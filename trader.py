@@ -48,7 +48,7 @@ STARTING_CAPITAL = 1000.0
 # DATA
 # ============================================================
 
-def fetch_prices(ticker, days=60):
+def fetch_prices(ticker, days=120):
     """Fetch daily OHLC data for a ticker. Robust to yfinance API changes:
     - Pins auto_adjust=True explicitly (default changed across versions)
     - Handles both MultiIndex and flat column structures
@@ -121,6 +121,22 @@ def compute_indicators(df):
 # ============================================================
 # STRATEGY DEFINITIONS
 # ============================================================
+
+def basket_is_complete(prices, tickers, mom_period):
+    """Returns (True, None) if all tickers in the basket have enough clean
+    data to evaluate. Returns (False, reason_str) otherwise. Used to defer
+    a rotation when even one ticker is missing/incomplete/NaN — picking
+    among only the survivors would bias the rotation decision."""
+    for t in tickers:
+        if t not in prices:
+            return False, f"missing {t}"
+        if len(prices[t]) < mom_period + 1:
+            return False, f"only {len(prices[t])} bars for {t}, need {mom_period + 1}"
+        df = prices[t]
+        if pd.isna(df.iloc[-1]['close']) or pd.isna(df.iloc[-(mom_period + 1)]['close']):
+            return False, f"NaN in {t}"
+    return True, None
+
 
 def eval_momentum_rotation(prices, tickers, mom_period):
     best = None
@@ -345,7 +361,10 @@ def save_state(state):
 
     try:
         with open(STATE_FILE, 'w') as f:
-            json.dump(state, f, indent=2)
+            # allow_nan=False so any NaN slipped through earlier guards
+            # crashes loudly here instead of writing literal `NaN` that the
+            # browser's JSON.parse later rejects (silent dashboard kill).
+            json.dump(state, f, indent=2, allow_nan=False)
     except Exception:
         # Restore from backup if write failed
         if backup.exists():
@@ -358,12 +377,69 @@ def save_state(state):
 # STRATEGY EXECUTION
 # ============================================================
 
+def detect_and_handle_split(strat, prices):
+    """yfinance auto_adjust=True back-rebases the entire series on splits.
+    Our stored shares + entry_price are at the original (pre-rebase) basis,
+    so equity = shares * adjusted_today would be wrong by the split ratio.
+    Look up today's adjusted price for the original entry_date and compare
+    against stored entry_price. >5% drift = split (dividends are <2%).
+    Rescale shares so equity_at_entry is preserved."""
+    holding = strat.get("holding")
+    entry_date_str = strat.get("entry_date")
+    entry_price = strat.get("entry_price", 0)
+    shares = strat.get("shares", 0)
+    if not holding or not entry_date_str or entry_price <= 0 or shares <= 0:
+        return None
+    if holding not in prices:
+        return None
+    df = prices[holding]
+    try:
+        entry_d = datetime.strptime(entry_date_str, "%Y-%m-%d").date()
+    except Exception:
+        return None
+    matches = df[df['date'].dt.date == entry_d]
+    if matches.empty:
+        return None
+    adj_entry = float(matches.iloc[0]['close'])
+    if pd.isna(adj_entry) or adj_entry <= 0:
+        return None
+    ratio = entry_price / adj_entry
+    if abs(ratio - 1.0) < 0.05:
+        return None  # within dividend-adjustment noise; not a split
+    # Split detected — rescale shares so entry_value = shares * entry_price stays same
+    new_shares = shares * ratio
+    strat["shares"] = new_shares
+    strat["entry_price"] = adj_entry
+    return f"SPLIT {holding}: shares {shares:.4f}->{new_shares:.4f}, entry ${entry_price:.2f}->${adj_entry:.2f}"
+
+
 def run_momentum_rotation(strat, prices, today_str):
+    # If we're holding a ticker and Yahoo didn't return it, defer the whole
+    # strategy this run. Otherwise the SELL block would silently skip while
+    # the BUY block would overwrite the holding — orphan trade + wrong shares.
+    if strat["holding"] and strat["holding"] not in prices:
+        return f"HOLD {strat['holding']} (data unavailable, deferred)"
+
+    # Defer if the basket is incomplete. Picking among only the available
+    # tickers would bias the rotation decision toward whichever happened to
+    # fetch successfully. Better to skip this check and try again next run.
+    ok, reason = basket_is_complete(prices, strat["tickers"], strat["mom_period"])
+    if not ok:
+        held = strat.get("holding") or "CASH"
+        return f"HOLD {held} (basket incomplete: {reason}, deferred)"
+
+    # Detect and adjust for stock splits before computing equity
+    split_msg = detect_and_handle_split(strat, prices)
+    if split_msg:
+        print(f"  {split_msg}")
+
     strat["days_since_check"] = strat.get("days_since_check", 0) + 1
 
     # Update equity using stored shares
     if strat["holding"] and strat["holding"] in prices:
         current_price = prices[strat["holding"]].iloc[-1]['close']
+        if pd.isna(current_price):
+            return f"SKIP {strat['holding']} (NaN close)"
         shares = strat.get("shares", 0)
         if shares > 0:
             strat["equity"] = shares * current_price
@@ -383,6 +459,10 @@ def run_momentum_rotation(strat, prices, today_str):
         # Sell at close
         if strat["holding"] and strat["holding"] in prices:
             exit_price = prices[strat["holding"]].iloc[-1]['close']
+            if pd.isna(exit_price):
+                # Don't write a SELL with NaN price — defer the whole rotation
+                strat["days_since_check"] = strat["check_interval"]  # try again next run
+                return f"SKIP SELL {strat['holding']} (NaN close)"
             pnl_pct = (exit_price / strat["entry_price"] - 1) * 100 if strat["entry_price"] > 0 else 0
             strat["trades"].append({
                 "date": today_str, "action": "SELL", "ticker": strat["holding"],
@@ -394,6 +474,13 @@ def run_momentum_rotation(strat, prices, today_str):
         # Buy at close
         if best and best in prices:
             entry_price = prices[best].iloc[-1]['close']
+            if pd.isna(entry_price) or entry_price <= 0:
+                # Don't write a BUY with NaN or zero price. Stay in cash this run.
+                strat["holding"] = None
+                strat["entry_price"] = 0
+                strat["entry_date"] = None
+                strat["shares"] = 0
+                return (action or "") + f" SKIP BUY {best} (bad close)"
             strat["holding"] = best
             strat["entry_price"] = entry_price
             strat["entry_date"] = today_str
@@ -422,11 +509,19 @@ def run_momentum_rotation(strat, prices, today_str):
 
 
 def run_rsi_strategy(strat, prices, today_str):
+    if 'SPY' not in prices:
+        # SPY missing from fetch — defer cleanly. Don't touch days_in_trade.
+        return f"HOLD {strat['holding'] or 'CASH'} (SPY unavailable, deferred)"
+    split_msg = detect_and_handle_split(strat, prices)
+    if split_msg:
+        print(f"  {split_msg}")
     rsi = eval_rsi_spy(prices)
     if rsi is None:
-        return None
+        return f"WAIT (RSI undefined)"
 
     spy_price = prices['SPY'].iloc[-1]['close']
+    if pd.isna(spy_price):
+        return "SKIP (SPY NaN close)"
     action = None
 
     # Update equity using stored shares
@@ -469,11 +564,18 @@ def run_rsi_strategy(strat, prices, today_str):
 
 
 def run_qqq_momentum(strat, prices, today_str):
+    if 'QQQ' not in prices:
+        return f"HOLD {strat['holding'] or 'CASH'} (QQQ unavailable, deferred)"
+    split_msg = detect_and_handle_split(strat, prices)
+    if split_msg:
+        print(f"  {split_msg}")
     mom = eval_qqq_momentum(prices)
     if mom is None:
-        return None
+        return "WAIT (QQQ momentum undefined)"
 
     qqq_price = prices['QQQ'].iloc[-1]['close']
+    if pd.isna(qqq_price):
+        return "SKIP (QQQ NaN close)"
     action = None
 
     # Update equity using stored shares
@@ -1169,16 +1271,18 @@ def main():
             print(f"Weekend ({eastern.strftime('%A')}). Skipping.")
             return
 
-        # Allow any run after 3:15 PM ET on a trading day. The lower bound
-        # blocks premarket execution (so we don't trade on incomplete data).
-        # No upper bound: GitHub Actions cron can be delayed 1-2+ hours,
-        # and running AFTER market close is fine — Yahoo's "Close" by then
-        # is the actual closing price, which matches MOC-order execution.
-        if et_total < 15 * 60 + 15:
-            print(f"Before trading window (current ET: {eastern.strftime('%I:%M %p')}). Skipping.")
+        # Only run AFTER market close (4:05 PM ET). Earlier runs would fetch
+        # yfinance with auto_adjust=True which returns the latest INTRADAY
+        # tick as 'Close' while the market is still open — that tick would be
+        # persisted as the day's close price (corrupting entry_price, equity,
+        # and trade records). Running at 4:05+ PM ET ensures Yahoo has the
+        # real settled close. No upper bound: GitHub Actions cron can be
+        # delayed multiple hours, and running later is fine.
+        if et_total < 16 * 60 + 5:
+            print(f"Before post-close window (current ET: {eastern.strftime('%I:%M %p')}, need >= 4:05 PM). Skipping.")
             return
 
-        print(f"Eastern time: {eastern.strftime('%I:%M %p')} - within trading window.")
+        print(f"Eastern time: {eastern.strftime('%I:%M %p')} - within post-close window.")
 
     print("Fetching prices...")
     prices = get_all_prices()

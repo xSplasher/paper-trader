@@ -7,25 +7,30 @@ on:
     # multiple triggers makes it overwhelmingly likely at least one fires.
     # The script's duplicate-run protection (last_run_date check) means only
     # the first one to actually execute does work; the rest exit early.
-    # All times are post-market-close ET (market closes 4:00 PM ET = 20:00 UTC
-    # in DST, 21:00 UTC in standard time), so we always work with real close
-    # prices, not intraday quotes.
-    - cron: '30 19 * * 1-5'   # 3:30 PM ET (DST) / 2:30 PM ET (EST)
+    #
+    # The trader.py guard refuses to run before 4:05 PM ET (after market
+    # close), so the earliest cron firings may skip (especially in EST).
+    # That's intentional — running pre-close would capture intraday quotes
+    # as if they were closing prices.
+    - cron: '30 19 * * 1-5'   # 3:30 PM ET (DST) / 2:30 PM ET (EST) — usually skips
     - cron: '30 20 * * 1-5'   # 4:30 PM ET (DST) / 3:30 PM ET (EST)
     - cron: '30 21 * * 1-5'   # 5:30 PM ET (DST) / 4:30 PM ET (EST)
     - cron: '30 22 * * 1-5'   # 6:30 PM ET (DST) / 5:30 PM ET (EST)
     - cron: '30 23 * * 1-5'   # 7:30 PM ET (DST) / 6:30 PM ET (EST)
   workflow_dispatch: # Manual trigger button
 
+# Queue overlapping runs instead of racing on git push. Without this, two
+# crons firing seconds apart (or a manual run during a scheduled one) would
+# both checkout, both run, both try to push — second push gets rejected as
+# non-fast-forward and the job fails with red CI noise.
+concurrency:
+  group: paper-trader
+  cancel-in-progress: false
+
 jobs:
   trade:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
-    # Retry logic: if the job fails, retry up to 3 times
-    strategy:
-      max-parallel: 1
-      fail-fast: false
 
     permissions:
       contents: write
@@ -47,17 +52,16 @@ jobs:
         run: python trader.py
         continue-on-error: true
 
-      # Retry after 6 hours if first attempt failed
+      # Same-job retry for transient network/yfinance hiccups
       - name: Wait and retry (attempt 2)
         if: steps.trade.outcome == 'failure'
         run: |
-          echo "First attempt failed. Waiting 30 seconds then retrying..."
+          echo "First attempt failed. Waiting 30s then retrying..."
           sleep 30
           python trader.py
         id: retry1
         continue-on-error: true
 
-      # Retry once more if second attempt also failed
       - name: Wait and retry (attempt 3)
         if: steps.retry1.outcome == 'failure'
         run: |
@@ -71,40 +75,11 @@ jobs:
           git config user.name "Paper Trader Bot"
           git config user.email "bot@paper-trader"
           git add state.json docs/index.html
-          git diff --staged --quiet || git commit -m "trade: $(date +%Y-%m-%d)"
-          git push
-
-  # Separate retry job that runs 6 hours later if the main job failed entirely
-  retry-6h:
-    needs: trade
-    if: failure()
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: write
-
-    steps:
-      - name: Wait 6 hours
-        run: sleep 21600
-
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install dependencies
-        run: pip install yfinance pandas numpy -q
-
-      - name: Run trader (6h retry)
-        run: python trader.py
-
-      - name: Commit results
-        run: |
-          git config user.name "Paper Trader Bot"
-          git config user.email "bot@paper-trader"
-          git add state.json docs/index.html
-          git diff --staged --quiet || git commit -m "trade (retry): $(date +%Y-%m-%d)"
-          git push
+          if ! git diff --staged --quiet; then
+            git commit -m "trade: $(TZ=America/New_York date +%Y-%m-%d)"
+            # Pull-rebase before push in case another run committed first.
+            # concurrency group above usually prevents this, but belt-and-suspenders.
+            for i in 1 2 3; do
+              git pull --rebase origin master && git push && break || sleep 5
+            done
+          fi
