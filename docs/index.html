@@ -52,7 +52,6 @@
         .period-btn.active { background: #22c55e; color: #000; border-color: #22c55e;
                              font-weight: 600; }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <h1>Paper Trader</h1>
@@ -379,8 +378,17 @@
 
     <script id="strategy-history" type="application/json">{"S1-TQQQ-SOXL-20d-5d": {"name": "TQQQ+SOXL 20d mom, 5d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 965.41}, {"date": "2026-05-28", "equity": 994.86}, {"date": "2026-05-29", "equity": 993.58}]}, "S2-TQQQ-SOXL-30d-10d": {"name": "TQQQ+SOXL 30d mom, 10d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 965.41}, {"date": "2026-05-28", "equity": 994.86}, {"date": "2026-05-29", "equity": 993.58}]}, "S3-TQQQ-SOXL-20d-10d": {"name": "TQQQ+SOXL 20d mom, 10d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 965.41}, {"date": "2026-05-28", "equity": 994.86}, {"date": "2026-05-29", "equity": 993.58}]}, "S4-SPY-RSI": {"name": "SPY RSI(2) mean reversion", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 1000.0}, {"date": "2026-05-28", "equity": 1000.0}, {"date": "2026-05-29", "equity": 1000.0}]}, "S5-QQQ-MOM": {"name": "QQQ 5d momentum, hold 20d", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 998.86}, {"date": "2026-05-28", "equity": 1007.28}, {"date": "2026-05-29", "equity": 1011.0}]}, "S6-UPRO-FAS-20d-5d": {"name": "UPRO+FAS 20d mom, 5d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 999.86}, {"date": "2026-05-28", "equity": 1015.97}, {"date": "2026-05-29", "equity": 1022.76}]}, "S7-KORU-NAIL-ERX-20d-5d": {"name": "KORU+NAIL+ERX 20d mom, 5d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 964.34}, {"date": "2026-05-28", "equity": 1083.89}, {"date": "2026-05-29", "equity": 1073.91}]}, "S8-KORU-DPST-20d-5d": {"name": "KORU+DPST 20d mom, 5d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 964.34}, {"date": "2026-05-28", "equity": 1083.89}, {"date": "2026-05-29", "equity": 1073.91}]}}</script>
     <script id="portfolio-history" type="application/json">[{"date": "2026-05-26", "total_equity": 8000.0}, {"date": "2026-05-27", "total_equity": 7823.65}, {"date": "2026-05-28", "total_equity": 8175.63}, {"date": "2026-05-29", "total_equity": 8162.32}]</script>
+    <script src="chart.umd.min.js"></script>
     <script>
-    (function () {
+    function initCharts() {
+        if (typeof Chart === 'undefined') {
+            // Chart.js failed to load (network blocked, etc) — show a graceful message
+            const portCanvas = document.getElementById('canvas-portfolio');
+            if (portCanvas && portCanvas.parentElement) {
+                portCanvas.parentElement.innerHTML = '<div style="color:#737373;text-align:center;padding:40px">Charts unavailable (chart.umd.min.js failed to load). The rest of the dashboard works.</div>';
+            }
+            return;
+        }
         const HISTORY = JSON.parse(document.getElementById('strategy-history').textContent);
         const PORTFOLIO = JSON.parse(document.getElementById('portfolio-history').textContent);
         const STARTING_CAPITAL = 1000.0;
@@ -591,7 +599,14 @@
                 renderChart(id, period);
             });
         });
-    })();
+    }
+
+    // Run after both DOM and Chart.js are ready.
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCharts);
+    } else {
+        initCharts();
+    }
     </script>
 </body>
 </html>
