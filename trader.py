@@ -969,7 +969,7 @@ def generate_html(state):
     </div>
 
     <div class="schedule-line">
-        Runs 3:30 PM ET daily · Equity updates daily · Checks: {schedule_line}
+        Runs after 4:05 PM ET daily (post-close) · Equity updates daily · Checks: {schedule_line}
     </div>
 
     <h2>Strategy Performance</h2>
