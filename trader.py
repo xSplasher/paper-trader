@@ -927,7 +927,6 @@ def generate_html(state):
         .period-btn.active {{ background: #22c55e; color: #000; border-color: #22c55e;
                              font-weight: 600; }}
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <h1>Paper Trader</h1>
@@ -998,8 +997,17 @@ def generate_html(state):
 
     <script id="strategy-history" type="application/json">{chart_history_json}</script>
     <script id="portfolio-history" type="application/json">{portfolio_history_json}</script>
+    <script src="chart.umd.min.js"></script>
     <script>
-    (function () {{
+    function initCharts() {{
+        if (typeof Chart === 'undefined') {{
+            // Chart.js failed to load (network blocked, etc) — show a graceful message
+            const portCanvas = document.getElementById('canvas-portfolio');
+            if (portCanvas && portCanvas.parentElement) {{
+                portCanvas.parentElement.innerHTML = '<div style="color:#737373;text-align:center;padding:40px">Charts unavailable (chart.umd.min.js failed to load). The rest of the dashboard works.</div>';
+            }}
+            return;
+        }}
         const HISTORY = JSON.parse(document.getElementById('strategy-history').textContent);
         const PORTFOLIO = JSON.parse(document.getElementById('portfolio-history').textContent);
         const STARTING_CAPITAL = {STARTING_CAPITAL};
@@ -1210,7 +1218,14 @@ def generate_html(state):
                 renderChart(id, period);
             }});
         }});
-    }})();
+    }}
+
+    // Run after both DOM and Chart.js are ready.
+    if (document.readyState === 'loading') {{
+        document.addEventListener('DOMContentLoaded', initCharts);
+    }} else {{
+        initCharts();
+    }}
     </script>
 </body>
 </html>"""
