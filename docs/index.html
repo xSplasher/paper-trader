@@ -55,29 +55,29 @@
 </head>
 <body>
     <h1>Paper Trader</h1>
-    <div class="meta">Last updated: 2026-06-10 17:33 ET | Run #12 |
+    <div class="meta">Last updated: 2026-06-11 17:33 ET | Run #13 |
     Started: 2026-05-23 16:00</div>
 
     <div class="overview">
         <div class="stat">
             <div class="label">Total P/L</div>
-            <div class="value" style="color:#ef4444">-$1,239.07</div>
-            <div class="sub">-15.5% · account $6,761</div>
+            <div class="value" style="color:#ef4444">-$873.68</div>
+            <div class="sub">-10.9% · account $7,126</div>
         </div>
         <div class="stat">
             <div class="label">Today's Move</div>
-            <div class="value" style="color:#ef4444">-$189.50</div>
-            <div class="sub">-2.73% · since previous run</div>
+            <div class="value" style="color:#22c55e">+$365.39</div>
+            <div class="sub">+5.40% · since previous run</div>
         </div>
         <div class="stat">
             <div class="label">Top</div>
-            <div class="value" style="color:#ef4444">-$18.65</div>
-            <div class="sub">S4 · -1.9%</div>
+            <div class="value" style="color:#ef4444">-$1.98</div>
+            <div class="sub">S4 · -0.2%</div>
         </div>
         <div class="stat">
             <div class="label">Worst</div>
-            <div class="value" style="color:#ef4444">-$373.41</div>
-            <div class="sub">S7 · -37.3%</div>
+            <div class="value" style="color:#ef4444">-$289.94</div>
+            <div class="sub">S7 · -29.0%</div>
         </div>
     </div>
 
@@ -110,11 +110,11 @@
         
         <tr class="strategy-row" data-strat-id="S4-SPY-RSI" style="cursor:pointer">
             <td>SPY RSI(2) mean reversion <span class="chart-toggle" id="toggle-S4-SPY-RSI">▸</span></td>
-            <td><strong>SPY</strong><span style="color:#737373;font-size:0.85em"> · 2d</span></td>
+            <td><strong>SPY</strong><span style="color:#737373;font-size:0.85em"> · 3d</span></td>
             <td style="color:#a3a3a3">$739.22</td>
-            <td><span style="color:#ef4444">-1.9%</span></td>
-            <td style="color:#ef4444;font-weight:bold">$981</td>
-            <td style="color:#ef4444;font-weight:bold">-1.9%</td>
+            <td><span style="color:#ef4444">-0.2%</span></td>
+            <td style="color:#ef4444;font-weight:bold">$998</td>
+            <td style="color:#ef4444;font-weight:bold">-0.2%</td>
             <td>0</td>
             <td>—</td>
         </tr>
@@ -128,13 +128,33 @@
                 <div style="position:relative;height:240px"><canvas id="canvas-S4-SPY-RSI"></canvas></div>
             </td>
         </tr>
+        <tr class="strategy-row" data-strat-id="S2-TQQQ-SOXL-30d-10d" style="cursor:pointer">
+            <td>TQQQ+SOXL 30d mom, 10d check <span class="chart-toggle" id="toggle-S2-TQQQ-SOXL-30d-10d">▸</span></td>
+            <td><strong>SOXL</strong><span style="color:#737373;font-size:0.85em"> · 16d</span></td>
+            <td style="color:#a3a3a3">$225.79</td>
+            <td><span style="color:#ef4444">-0.8%</span></td>
+            <td style="color:#ef4444;font-weight:bold">$992</td>
+            <td style="color:#ef4444;font-weight:bold">-0.8%</td>
+            <td>0</td>
+            <td>—</td>
+        </tr>
+        <tr class="chart-row" id="chart-row-S2-TQQQ-SOXL-30d-10d" style="display:none">
+            <td colspan="8" style="padding:18px 20px;background:#0e0e0e">
+                <div class="chart-controls">
+                    <button class="period-btn active" data-strat-id="S2-TQQQ-SOXL-30d-10d" data-period="day">Daily</button>
+                    <button class="period-btn" data-strat-id="S2-TQQQ-SOXL-30d-10d" data-period="week">Weekly</button>
+                    <button class="period-btn" data-strat-id="S2-TQQQ-SOXL-30d-10d" data-period="month">Monthly</button>
+                </div>
+                <div style="position:relative;height:240px"><canvas id="canvas-S2-TQQQ-SOXL-30d-10d"></canvas></div>
+            </td>
+        </tr>
         <tr class="strategy-row" data-strat-id="S5-QQQ-MOM" style="cursor:pointer">
             <td>QQQ 5d momentum, hold 20d <span class="chart-toggle" id="toggle-S5-QQQ-MOM">▸</span></td>
-            <td><strong>QQQ</strong><span style="color:#737373;font-size:0.85em"> · 15d</span></td>
+            <td><strong>QQQ</strong><span style="color:#737373;font-size:0.85em"> · 16d</span></td>
             <td style="color:#a3a3a3">$730.28</td>
-            <td><span style="color:#ef4444">-5.0%</span></td>
-            <td style="color:#ef4444;font-weight:bold">$950</td>
-            <td style="color:#ef4444;font-weight:bold">-5.0%</td>
+            <td><span style="color:#ef4444">-1.8%</span></td>
+            <td style="color:#ef4444;font-weight:bold">$982</td>
+            <td style="color:#ef4444;font-weight:bold">-1.8%</td>
             <td>0</td>
             <td>—</td>
         </tr>
@@ -150,11 +170,11 @@
         </tr>
         <tr class="strategy-row" data-strat-id="S6-UPRO-FAS-20d-5d" style="cursor:pointer">
             <td>UPRO+FAS 20d mom, 5d check <span class="chart-toggle" id="toggle-S6-UPRO-FAS-20d-5d">▸</span></td>
-            <td><strong>FAS</strong><span style="color:#737373;font-size:0.85em"> · 1d</span></td>
+            <td><strong>FAS</strong><span style="color:#737373;font-size:0.85em"> · 2d</span></td>
             <td style="color:#a3a3a3">$138.28</td>
-            <td><span style="color:#ef4444">-1.6%</span></td>
-            <td style="color:#ef4444;font-weight:bold">$926</td>
-            <td style="color:#ef4444;font-weight:bold">-7.4%</td>
+            <td><span style="color:#22c55e">+0.6%</span></td>
+            <td style="color:#ef4444;font-weight:bold">$946</td>
+            <td style="color:#ef4444;font-weight:bold">-5.4%</td>
             <td>1</td>
             <td>0%</td>
         </tr>
@@ -208,33 +228,13 @@
                 <div style="position:relative;height:240px"><canvas id="canvas-S3-TQQQ-SOXL-20d-10d"></canvas></div>
             </td>
         </tr>
-        <tr class="strategy-row" data-strat-id="S2-TQQQ-SOXL-30d-10d" style="cursor:pointer">
-            <td>TQQQ+SOXL 30d mom, 10d check <span class="chart-toggle" id="toggle-S2-TQQQ-SOXL-30d-10d">▸</span></td>
-            <td><strong>SOXL</strong><span style="color:#737373;font-size:0.85em"> · 15d</span></td>
-            <td style="color:#a3a3a3">$225.79</td>
-            <td><span style="color:#ef4444">-20.0%</span></td>
-            <td style="color:#ef4444;font-weight:bold">$800</td>
-            <td style="color:#ef4444;font-weight:bold">-20.0%</td>
-            <td>0</td>
-            <td>—</td>
-        </tr>
-        <tr class="chart-row" id="chart-row-S2-TQQQ-SOXL-30d-10d" style="display:none">
-            <td colspan="8" style="padding:18px 20px;background:#0e0e0e">
-                <div class="chart-controls">
-                    <button class="period-btn active" data-strat-id="S2-TQQQ-SOXL-30d-10d" data-period="day">Daily</button>
-                    <button class="period-btn" data-strat-id="S2-TQQQ-SOXL-30d-10d" data-period="week">Weekly</button>
-                    <button class="period-btn" data-strat-id="S2-TQQQ-SOXL-30d-10d" data-period="month">Monthly</button>
-                </div>
-                <div style="position:relative;height:240px"><canvas id="canvas-S2-TQQQ-SOXL-30d-10d"></canvas></div>
-            </td>
-        </tr>
         <tr class="strategy-row" data-strat-id="S8-KORU-DPST-20d-5d" style="cursor:pointer">
             <td>KORU+DPST 20d mom, 5d check <span class="chart-toggle" id="toggle-S8-KORU-DPST-20d-5d">▸</span></td>
-            <td><strong>DPST</strong><span style="color:#737373;font-size:0.85em"> · 1d</span></td>
+            <td><strong>DPST</strong><span style="color:#737373;font-size:0.85em"> · 2d</span></td>
             <td style="color:#a3a3a3">$121.81</td>
-            <td><span style="color:#22c55e">+1.3%</span></td>
-            <td style="color:#ef4444;font-weight:bold">$690</td>
-            <td style="color:#ef4444;font-weight:bold">-31.0%</td>
+            <td><span style="color:#22c55e">+4.3%</span></td>
+            <td style="color:#ef4444;font-weight:bold">$711</td>
+            <td style="color:#ef4444;font-weight:bold">-28.9%</td>
             <td>1</td>
             <td>0%</td>
         </tr>
@@ -250,11 +250,11 @@
         </tr>
         <tr class="strategy-row" data-strat-id="S7-KORU-NAIL-ERX-20d-5d" style="cursor:pointer">
             <td>KORU+NAIL+ERX 20d mom, 5d check <span class="chart-toggle" id="toggle-S7-KORU-NAIL-ERX-20d-5d">▸</span></td>
-            <td><strong>NAIL</strong><span style="color:#737373;font-size:0.85em"> · 1d</span></td>
+            <td><strong>NAIL</strong><span style="color:#737373;font-size:0.85em"> · 2d</span></td>
             <td style="color:#a3a3a3">$42.23</td>
-            <td><span style="color:#ef4444">-8.1%</span></td>
-            <td style="color:#ef4444;font-weight:bold">$627</td>
-            <td style="color:#ef4444;font-weight:bold">-37.3%</td>
+            <td><span style="color:#22c55e">+4.1%</span></td>
+            <td style="color:#ef4444;font-weight:bold">$710</td>
+            <td style="color:#ef4444;font-weight:bold">-29.0%</td>
             <td>1</td>
             <td>0%</td>
         </tr>
@@ -281,6 +281,19 @@
                     <td>BUY</td>
                     <td>SPY</td>
                     <td>$739.22</td>
+                    <td style="color:#888"></td>
+                    <td>$1,000</td>
+                </tr>
+        </table>
+        <h3>TQQQ+SOXL 30d mom, 10d check</h3>
+        <table>
+            <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
+            
+                <tr>
+                    <td>2026-05-26</td>
+                    <td>BUY</td>
+                    <td>SOXL</td>
+                    <td>$225.79</td>
                     <td style="color:#888"></td>
                     <td>$1,000</td>
                 </tr>
@@ -369,19 +382,6 @@
                     <td>$893</td>
                 </tr>
         </table>
-        <h3>TQQQ+SOXL 30d mom, 10d check</h3>
-        <table>
-            <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
-            
-                <tr>
-                    <td>2026-05-26</td>
-                    <td>BUY</td>
-                    <td>SOXL</td>
-                    <td>$225.79</td>
-                    <td style="color:#888"></td>
-                    <td>$1,000</td>
-                </tr>
-        </table>
         <h3>KORU+DPST 20d mom, 5d check</h3>
         <table>
             <tr><th>Date</th><th>Action</th><th>Ticker</th><th>Price</th><th>P&L</th><th>Equity</th></tr>
@@ -448,8 +448,8 @@
         Click any strategy row to view its P/L history over time.
     </div>
 
-    <script id="strategy-history" type="application/json">{"S1-TQQQ-SOXL-20d-5d": {"name": "TQQQ+SOXL 20d mom, 5d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 965.41}, {"date": "2026-05-28", "equity": 994.86}, {"date": "2026-05-29", "equity": 993.58}, {"date": "2026-06-01", "equity": 1005.49}, {"date": "2026-06-02", "equity": 1179.5}, {"date": "2026-06-03", "equity": 1242.48}, {"date": "2026-06-04", "equity": 1163.47}, {"date": "2026-06-05", "equity": 808.45}, {"date": "2026-06-08", "equity": 936.45}, {"date": "2026-06-09", "equity": 893.22}, {"date": "2026-06-10", "equity": 893.22}]}, "S2-TQQQ-SOXL-30d-10d": {"name": "TQQQ+SOXL 30d mom, 10d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 965.41}, {"date": "2026-05-28", "equity": 994.86}, {"date": "2026-05-29", "equity": 993.58}, {"date": "2026-06-01", "equity": 1005.49}, {"date": "2026-06-02", "equity": 1179.5}, {"date": "2026-06-03", "equity": 1242.48}, {"date": "2026-06-04", "equity": 1163.47}, {"date": "2026-06-05", "equity": 808.45}, {"date": "2026-06-08", "equity": 936.45}, {"date": "2026-06-09", "equity": 893.22}, {"date": "2026-06-10", "equity": 800.08}]}, "S3-TQQQ-SOXL-20d-10d": {"name": "TQQQ+SOXL 20d mom, 10d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 965.41}, {"date": "2026-05-28", "equity": 994.86}, {"date": "2026-05-29", "equity": 993.58}, {"date": "2026-06-01", "equity": 1005.49}, {"date": "2026-06-02", "equity": 1179.5}, {"date": "2026-06-03", "equity": 1242.48}, {"date": "2026-06-04", "equity": 1163.47}, {"date": "2026-06-05", "equity": 808.45}, {"date": "2026-06-08", "equity": 936.45}, {"date": "2026-06-09", "equity": 893.22}, {"date": "2026-06-10", "equity": 893.22}]}, "S4-SPY-RSI": {"name": "SPY RSI(2) mean reversion", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 1000.0}, {"date": "2026-05-28", "equity": 1000.0}, {"date": "2026-05-29", "equity": 1000.0}, {"date": "2026-06-01", "equity": 1000.0}, {"date": "2026-06-02", "equity": 1000.0}, {"date": "2026-06-03", "equity": 1000.0}, {"date": "2026-06-04", "equity": 1000.0}, {"date": "2026-06-05", "equity": 1000.0}, {"date": "2026-06-08", "equity": 1000.0}, {"date": "2026-06-09", "equity": 997.06}, {"date": "2026-06-10", "equity": 981.35}]}, "S5-QQQ-MOM": {"name": "QQQ 5d momentum, hold 20d", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 998.86}, {"date": "2026-05-28", "equity": 1007.28}, {"date": "2026-05-29", "equity": 1011.0}, {"date": "2026-06-01", "equity": 1017.06}, {"date": "2026-06-02", "equity": 1021.75}, {"date": "2026-06-03", "equity": 1019.07}, {"date": "2026-06-04", "equity": 1014.15}, {"date": "2026-06-05", "equity": 965.47}, {"date": "2026-06-08", "equity": 980.54}, {"date": "2026-06-09", "equity": 969.26}, {"date": "2026-06-10", "equity": 949.9}]}, "S6-UPRO-FAS-20d-5d": {"name": "UPRO+FAS 20d mom, 5d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 999.86}, {"date": "2026-05-28", "equity": 1015.97}, {"date": "2026-05-29", "equity": 1022.76}, {"date": "2026-06-01", "equity": 1030.37}, {"date": "2026-06-02", "equity": 1034.35}, {"date": "2026-06-03", "equity": 1012.75}, {"date": "2026-06-04", "equity": 1023.79}, {"date": "2026-06-05", "equity": 942.89}, {"date": "2026-06-08", "equity": 950.02}, {"date": "2026-06-09", "equity": 940.83}, {"date": "2026-06-10", "equity": 926.21}]}, "S7-KORU-NAIL-ERX-20d-5d": {"name": "KORU+NAIL+ERX 20d mom, 5d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 964.34}, {"date": "2026-05-28", "equity": 1083.89}, {"date": "2026-05-29", "equity": 1073.91}, {"date": "2026-06-01", "equity": 1246.23}, {"date": "2026-06-02", "equity": 1206.73}, {"date": "2026-06-03", "equity": 1179.06}, {"date": "2026-06-04", "equity": 1034.21}, {"date": "2026-06-05", "equity": 601.01}, {"date": "2026-06-08", "equity": 698.97}, {"date": "2026-06-09", "equity": 681.81}, {"date": "2026-06-10", "equity": 626.59}]}, "S8-KORU-DPST-20d-5d": {"name": "KORU+DPST 20d mom, 5d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 964.34}, {"date": "2026-05-28", "equity": 1083.89}, {"date": "2026-05-29", "equity": 1073.91}, {"date": "2026-06-01", "equity": 1246.23}, {"date": "2026-06-02", "equity": 1206.73}, {"date": "2026-06-03", "equity": 1179.06}, {"date": "2026-06-04", "equity": 1034.21}, {"date": "2026-06-05", "equity": 601.01}, {"date": "2026-06-08", "equity": 698.97}, {"date": "2026-06-09", "equity": 681.81}, {"date": "2026-06-10", "equity": 690.37}]}}</script>
-    <script id="portfolio-history" type="application/json">[{"date": "2026-05-26", "total_equity": 8000.0}, {"date": "2026-05-27", "total_equity": 7823.65}, {"date": "2026-05-28", "total_equity": 8175.63}, {"date": "2026-05-29", "total_equity": 8162.32}, {"date": "2026-06-01", "total_equity": 8556.37}, {"date": "2026-06-02", "total_equity": 9008.07}, {"date": "2026-06-03", "total_equity": 9117.39}, {"date": "2026-06-04", "total_equity": 8596.76}, {"date": "2026-06-05", "total_equity": 6535.72}, {"date": "2026-06-08", "total_equity": 7137.84}, {"date": "2026-06-09", "total_equity": 6950.43}, {"date": "2026-06-10", "total_equity": 6760.93}]</script>
+    <script id="strategy-history" type="application/json">{"S1-TQQQ-SOXL-20d-5d": {"name": "TQQQ+SOXL 20d mom, 5d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 965.41}, {"date": "2026-05-28", "equity": 994.86}, {"date": "2026-05-29", "equity": 993.58}, {"date": "2026-06-01", "equity": 1005.49}, {"date": "2026-06-02", "equity": 1179.5}, {"date": "2026-06-03", "equity": 1242.48}, {"date": "2026-06-04", "equity": 1163.47}, {"date": "2026-06-05", "equity": 808.45}, {"date": "2026-06-08", "equity": 936.45}, {"date": "2026-06-09", "equity": 893.22}, {"date": "2026-06-10", "equity": 893.22}, {"date": "2026-06-11", "equity": 893.22}]}, "S2-TQQQ-SOXL-30d-10d": {"name": "TQQQ+SOXL 30d mom, 10d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 965.41}, {"date": "2026-05-28", "equity": 994.86}, {"date": "2026-05-29", "equity": 993.58}, {"date": "2026-06-01", "equity": 1005.49}, {"date": "2026-06-02", "equity": 1179.5}, {"date": "2026-06-03", "equity": 1242.48}, {"date": "2026-06-04", "equity": 1163.47}, {"date": "2026-06-05", "equity": 808.45}, {"date": "2026-06-08", "equity": 936.45}, {"date": "2026-06-09", "equity": 893.22}, {"date": "2026-06-10", "equity": 800.08}, {"date": "2026-06-11", "equity": 992.03}]}, "S3-TQQQ-SOXL-20d-10d": {"name": "TQQQ+SOXL 20d mom, 10d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 965.41}, {"date": "2026-05-28", "equity": 994.86}, {"date": "2026-05-29", "equity": 993.58}, {"date": "2026-06-01", "equity": 1005.49}, {"date": "2026-06-02", "equity": 1179.5}, {"date": "2026-06-03", "equity": 1242.48}, {"date": "2026-06-04", "equity": 1163.47}, {"date": "2026-06-05", "equity": 808.45}, {"date": "2026-06-08", "equity": 936.45}, {"date": "2026-06-09", "equity": 893.22}, {"date": "2026-06-10", "equity": 893.22}, {"date": "2026-06-11", "equity": 893.22}]}, "S4-SPY-RSI": {"name": "SPY RSI(2) mean reversion", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 1000.0}, {"date": "2026-05-28", "equity": 1000.0}, {"date": "2026-05-29", "equity": 1000.0}, {"date": "2026-06-01", "equity": 1000.0}, {"date": "2026-06-02", "equity": 1000.0}, {"date": "2026-06-03", "equity": 1000.0}, {"date": "2026-06-04", "equity": 1000.0}, {"date": "2026-06-05", "equity": 1000.0}, {"date": "2026-06-08", "equity": 1000.0}, {"date": "2026-06-09", "equity": 997.06}, {"date": "2026-06-10", "equity": 981.35}, {"date": "2026-06-11", "equity": 998.02}]}, "S5-QQQ-MOM": {"name": "QQQ 5d momentum, hold 20d", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 998.86}, {"date": "2026-05-28", "equity": 1007.28}, {"date": "2026-05-29", "equity": 1011.0}, {"date": "2026-06-01", "equity": 1017.06}, {"date": "2026-06-02", "equity": 1021.75}, {"date": "2026-06-03", "equity": 1019.07}, {"date": "2026-06-04", "equity": 1014.15}, {"date": "2026-06-05", "equity": 965.47}, {"date": "2026-06-08", "equity": 980.54}, {"date": "2026-06-09", "equity": 969.26}, {"date": "2026-06-10", "equity": 949.9}, {"date": "2026-06-11", "equity": 981.98}]}, "S6-UPRO-FAS-20d-5d": {"name": "UPRO+FAS 20d mom, 5d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 999.86}, {"date": "2026-05-28", "equity": 1015.97}, {"date": "2026-05-29", "equity": 1022.76}, {"date": "2026-06-01", "equity": 1030.37}, {"date": "2026-06-02", "equity": 1034.35}, {"date": "2026-06-03", "equity": 1012.75}, {"date": "2026-06-04", "equity": 1023.79}, {"date": "2026-06-05", "equity": 942.89}, {"date": "2026-06-08", "equity": 950.02}, {"date": "2026-06-09", "equity": 940.83}, {"date": "2026-06-10", "equity": 926.21}, {"date": "2026-06-11", "equity": 946.48}]}, "S7-KORU-NAIL-ERX-20d-5d": {"name": "KORU+NAIL+ERX 20d mom, 5d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 964.34}, {"date": "2026-05-28", "equity": 1083.89}, {"date": "2026-05-29", "equity": 1073.91}, {"date": "2026-06-01", "equity": 1246.23}, {"date": "2026-06-02", "equity": 1206.73}, {"date": "2026-06-03", "equity": 1179.06}, {"date": "2026-06-04", "equity": 1034.21}, {"date": "2026-06-05", "equity": 601.01}, {"date": "2026-06-08", "equity": 698.97}, {"date": "2026-06-09", "equity": 681.81}, {"date": "2026-06-10", "equity": 626.59}, {"date": "2026-06-11", "equity": 710.06}]}, "S8-KORU-DPST-20d-5d": {"name": "KORU+DPST 20d mom, 5d check", "history": [{"date": "2026-05-26", "equity": 1000.0}, {"date": "2026-05-27", "equity": 964.34}, {"date": "2026-05-28", "equity": 1083.89}, {"date": "2026-05-29", "equity": 1073.91}, {"date": "2026-06-01", "equity": 1246.23}, {"date": "2026-06-02", "equity": 1206.73}, {"date": "2026-06-03", "equity": 1179.06}, {"date": "2026-06-04", "equity": 1034.21}, {"date": "2026-06-05", "equity": 601.01}, {"date": "2026-06-08", "equity": 698.97}, {"date": "2026-06-09", "equity": 681.81}, {"date": "2026-06-10", "equity": 690.37}, {"date": "2026-06-11", "equity": 711.3}]}}</script>
+    <script id="portfolio-history" type="application/json">[{"date": "2026-05-26", "total_equity": 8000.0}, {"date": "2026-05-27", "total_equity": 7823.65}, {"date": "2026-05-28", "total_equity": 8175.63}, {"date": "2026-05-29", "total_equity": 8162.32}, {"date": "2026-06-01", "total_equity": 8556.37}, {"date": "2026-06-02", "total_equity": 9008.07}, {"date": "2026-06-03", "total_equity": 9117.39}, {"date": "2026-06-04", "total_equity": 8596.76}, {"date": "2026-06-05", "total_equity": 6535.72}, {"date": "2026-06-08", "total_equity": 7137.84}, {"date": "2026-06-09", "total_equity": 6950.43}, {"date": "2026-06-10", "total_equity": 6760.93}, {"date": "2026-06-11", "total_equity": 7126.32}]</script>
     <script src="chart.umd.min.js"></script>
     <script>
     function initCharts() {
