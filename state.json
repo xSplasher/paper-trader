@@ -1,8 +1,8 @@
 {
   "created": "2026-05-23 16:00",
-  "last_run": "2026-07-07 17:02 ET",
-  "last_run_date": "2026-07-07",
-  "run_count": 29,
+  "last_run": "2026-07-08 16:41 ET",
+  "last_run_date": "2026-07-08",
+  "run_count": 30,
   "strategies": {
     "S1_TQQQ_SOXL_20d_5d": {
       "name": "TQQQ+SOXL 20d mom, 5d check",
@@ -18,7 +18,7 @@
       "entry_date": null,
       "equity": 906.5669223748433,
       "shares": 0,
-      "days_since_check": 3,
+      "days_since_check": 4,
       "trades": [
         {
           "date": "2026-05-26",
@@ -167,6 +167,10 @@
         {
           "date": "2026-07-07",
           "equity": 906.57
+        },
+        {
+          "date": "2026-07-08",
+          "equity": 906.57
         }
       ]
     },
@@ -182,9 +186,9 @@
       "holding": "SOXL",
       "entry_price": 225.7899932861328,
       "entry_date": "2026-05-26",
-      "equity": 732.007634057748,
+      "equity": 774.2593229217106,
       "shares": 4.428894236835147,
-      "days_since_check": 8,
+      "days_since_check": 9,
       "trades": [
         {
           "date": "2026-05-26",
@@ -310,6 +314,10 @@
         {
           "date": "2026-07-07",
           "equity": 732.01
+        },
+        {
+          "date": "2026-07-08",
+          "equity": 774.26
         }
       ]
     },
@@ -327,7 +335,7 @@
       "entry_date": null,
       "equity": 893.2193572467222,
       "shares": 0,
-      "days_since_check": 8,
+      "days_since_check": 9,
       "trades": [
         {
           "date": "2026-05-26",
@@ -461,17 +469,21 @@
         {
           "date": "2026-07-07",
           "equity": 893.22
+        },
+        {
+          "date": "2026-07-08",
+          "equity": 893.22
         }
       ]
     },
     "S4_SPY_RSI": {
       "name": "SPY RSI(2) mean reversion",
       "type": "rsi_reversion",
-      "holding": null,
-      "entry_price": 0,
-      "entry_date": "2026-07-02",
+      "holding": "SPY",
+      "entry_price": 745.4000244140625,
+      "entry_date": "2026-07-08",
       "equity": 1017.8633477097246,
-      "shares": 0,
+      "shares": 1.3655263138874159,
       "days_in_trade": 0,
       "trades": [
         {
@@ -532,6 +544,13 @@
           "ticker": "SPY",
           "price": 751.28,
           "pnl_pct": 0.87,
+          "equity": 1017.86
+        },
+        {
+          "date": "2026-07-08",
+          "action": "BUY",
+          "ticker": "SPY",
+          "price": 745.4,
           "equity": 1017.86
         }
       ],
@@ -651,6 +670,10 @@
         {
           "date": "2026-07-07",
           "equity": 1017.86
+        },
+        {
+          "date": "2026-07-08",
+          "equity": 1017.86
         }
       ]
     },
@@ -660,9 +683,9 @@
       "holding": "QQQ",
       "entry_price": 736.4000244140625,
       "entry_date": "2026-06-30",
-      "equity": 937.440581437668,
+      "equity": 940.0966077444724,
       "shares": 1.3213997027414806,
-      "days_in_trade": 4,
+      "days_in_trade": 5,
       "trades": [
         {
           "date": "2026-05-26",
@@ -803,6 +826,10 @@
         {
           "date": "2026-07-07",
           "equity": 937.44
+        },
+        {
+          "date": "2026-07-08",
+          "equity": 940.1
         }
       ]
     },
@@ -818,9 +845,9 @@
       "holding": "FAS",
       "entry_price": 138.27999877929688,
       "entry_date": "2026-06-09",
-      "equity": 1139.9136795358825,
+      "equity": 1074.801077735772,
       "shares": 6.803830280624898,
-      "days_since_check": 3,
+      "days_since_check": 4,
       "trades": [
         {
           "date": "2026-05-26",
@@ -961,6 +988,10 @@
         {
           "date": "2026-07-07",
           "equity": 1139.91
+        },
+        {
+          "date": "2026-07-08",
+          "equity": 1074.8
         }
       ]
     },
@@ -977,9 +1008,9 @@
       "holding": "NAIL",
       "entry_price": 42.22999954223633,
       "entry_date": "2026-06-09",
-      "equity": 727.0127721207098,
+      "equity": 642.8969386801305,
       "shares": 16.145076434134022,
-      "days_since_check": 3,
+      "days_since_check": 4,
       "trades": [
         {
           "date": "2026-05-26",
@@ -1120,6 +1151,10 @@
         {
           "date": "2026-07-07",
           "equity": 727.01
+        },
+        {
+          "date": "2026-07-08",
+          "equity": 642.9
         }
       ]
     },
@@ -1135,9 +1170,9 @@
       "holding": "DPST",
       "entry_price": 136.64999389648438,
       "entry_date": "2026-06-24",
-      "equity": 599.6183051981867,
+      "equity": 556.8004514664656,
       "shares": 4.214354163218035,
-      "days_since_check": 3,
+      "days_since_check": 4,
       "trades": [
         {
           "date": "2026-05-26",
@@ -1308,6 +1343,10 @@
         {
           "date": "2026-07-07",
           "equity": 599.62
+        },
+        {
+          "date": "2026-07-08",
+          "equity": 556.8
         }
       ]
     }
@@ -1428,6 +1467,10 @@
     {
       "date": "2026-07-07",
       "total_equity": 6953.64
+    },
+    {
+      "date": "2026-07-08",
+      "total_equity": 6806.5
     }
   ]
 }
