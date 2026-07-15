@@ -1,8 +1,8 @@
 {
   "created": "2026-05-23 16:00",
-  "last_run": "2026-07-14 16:35 ET",
-  "last_run_date": "2026-07-14",
-  "run_count": 34,
+  "last_run": "2026-07-15 16:30 ET",
+  "last_run_date": "2026-07-15",
+  "run_count": 35,
   "strategies": {
     "S1_TQQQ_SOXL_20d_5d": {
       "name": "TQQQ+SOXL 20d mom, 5d check",
@@ -18,7 +18,7 @@
       "entry_date": null,
       "equity": 906.5669223748433,
       "shares": 0,
-      "days_since_check": 3,
+      "days_since_check": 4,
       "trades": [
         {
           "date": "2026-05-26",
@@ -187,6 +187,10 @@
         {
           "date": "2026-07-14",
           "equity": 906.57
+        },
+        {
+          "date": "2026-07-15",
+          "equity": 906.57
         }
       ]
     },
@@ -204,7 +208,7 @@
       "entry_date": null,
       "equity": 852.3406823630114,
       "shares": 0,
-      "days_since_check": 3,
+      "days_since_check": 4,
       "trades": [
         {
           "date": "2026-05-26",
@@ -358,6 +362,10 @@
         {
           "date": "2026-07-14",
           "equity": 852.34
+        },
+        {
+          "date": "2026-07-15",
+          "equity": 852.34
         }
       ]
     },
@@ -375,7 +383,7 @@
       "entry_date": null,
       "equity": 893.2193572467222,
       "shares": 0,
-      "days_since_check": 3,
+      "days_since_check": 4,
       "trades": [
         {
           "date": "2026-05-26",
@@ -528,6 +536,10 @@
         },
         {
           "date": "2026-07-14",
+          "equity": 893.22
+        },
+        {
+          "date": "2026-07-15",
           "equity": 893.22
         }
       ]
@@ -754,6 +766,10 @@
         {
           "date": "2026-07-14",
           "equity": 1026.48
+        },
+        {
+          "date": "2026-07-15",
+          "equity": 1026.48
         }
       ]
     },
@@ -763,9 +779,9 @@
       "holding": "QQQ",
       "entry_price": 736.4000244140625,
       "entry_date": "2026-06-30",
-      "equity": 950.9981552920897,
+      "equity": 948.4214097413762,
       "shares": 1.3213997027414806,
-      "days_in_trade": 9,
+      "days_in_trade": 10,
       "trades": [
         {
           "date": "2026-05-26",
@@ -926,6 +942,10 @@
         {
           "date": "2026-07-14",
           "equity": 951.0
+        },
+        {
+          "date": "2026-07-15",
+          "equity": 948.42
         }
       ]
     },
@@ -941,9 +961,9 @@
       "holding": "FAS",
       "entry_price": 138.27999877929688,
       "entry_date": "2026-06-09",
-      "equity": 1144.4042324374657,
+      "equity": 1167.6053186107672,
       "shares": 6.803830280624898,
-      "days_since_check": 3,
+      "days_since_check": 4,
       "trades": [
         {
           "date": "2026-05-26",
@@ -1104,6 +1124,10 @@
         {
           "date": "2026-07-14",
           "equity": 1144.4
+        },
+        {
+          "date": "2026-07-15",
+          "equity": 1167.61
         }
       ]
     },
@@ -1122,7 +1146,7 @@
       "entry_date": null,
       "equity": 662.1095574648615,
       "shares": 0,
-      "days_since_check": 3,
+      "days_since_check": 4,
       "trades": [
         {
           "date": "2026-05-26",
@@ -1291,6 +1315,10 @@
         {
           "date": "2026-07-14",
           "equity": 662.11
+        },
+        {
+          "date": "2026-07-15",
+          "equity": 662.11
         }
       ]
     },
@@ -1306,9 +1334,9 @@
       "holding": "DPST",
       "entry_price": 136.64999389648438,
       "entry_date": "2026-06-24",
-      "equity": 595.2775255545474,
+      "equity": 614.4528498583777,
       "shares": 4.214354163218035,
-      "days_since_check": 3,
+      "days_since_check": 4,
       "trades": [
         {
           "date": "2026-05-26",
@@ -1499,6 +1527,10 @@
         {
           "date": "2026-07-14",
           "equity": 595.28
+        },
+        {
+          "date": "2026-07-15",
+          "equity": 614.45
         }
       ]
     }
@@ -1639,6 +1671,10 @@
     {
       "date": "2026-07-14",
       "total_equity": 7031.4
+    },
+    {
+      "date": "2026-07-15",
+      "total_equity": 7071.2
     }
   ]
 }
