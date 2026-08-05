@@ -1,8 +1,8 @@
 {
   "created": "2026-05-23 16:00",
-  "last_run": "2026-08-04 16:49 ET",
-  "last_run_date": "2026-08-04",
-  "run_count": 49,
+  "last_run": "2026-08-05 16:42 ET",
+  "last_run_date": "2026-08-05",
+  "run_count": 50,
   "strategies": {
     "S1_TQQQ_SOXL_20d_5d": {
       "name": "TQQQ+SOXL 20d mom, 5d check",
@@ -18,7 +18,7 @@
       "entry_date": null,
       "equity": 906.5669223748433,
       "shares": 0,
-      "days_since_check": 3,
+      "days_since_check": 4,
       "trades": [
         {
           "date": "2026-05-26",
@@ -247,6 +247,10 @@
         {
           "date": "2026-08-04",
           "equity": 906.57
+        },
+        {
+          "date": "2026-08-05",
+          "equity": 906.57
         }
       ]
     },
@@ -264,7 +268,7 @@
       "entry_date": null,
       "equity": 852.3406823630114,
       "shares": 0,
-      "days_since_check": 8,
+      "days_since_check": 9,
       "trades": [
         {
           "date": "2026-05-26",
@@ -478,6 +482,10 @@
         {
           "date": "2026-08-04",
           "equity": 852.34
+        },
+        {
+          "date": "2026-08-05",
+          "equity": 852.34
         }
       ]
     },
@@ -495,7 +503,7 @@
       "entry_date": null,
       "equity": 893.2193572467222,
       "shares": 0,
-      "days_since_check": 8,
+      "days_since_check": 9,
       "trades": [
         {
           "date": "2026-05-26",
@@ -708,6 +716,10 @@
         },
         {
           "date": "2026-08-04",
+          "equity": 893.22
+        },
+        {
+          "date": "2026-08-05",
           "equity": 893.22
         }
       ]
@@ -1024,6 +1036,10 @@
         {
           "date": "2026-08-04",
           "equity": 1037.12
+        },
+        {
+          "date": "2026-08-05",
+          "equity": 1037.12
         }
       ]
     },
@@ -1033,9 +1049,9 @@
       "holding": "QQQ",
       "entry_price": 723.8499755859375,
       "entry_date": "2026-08-04",
-      "equity": 874.4097994865319,
+      "equity": 866.497423019222,
       "shares": 1.2079986585324123,
-      "days_in_trade": 0,
+      "days_in_trade": 1,
       "trades": [
         {
           "date": "2026-05-26",
@@ -1271,6 +1287,10 @@
         {
           "date": "2026-08-04",
           "equity": 874.41
+        },
+        {
+          "date": "2026-08-05",
+          "equity": 866.5
         }
       ]
     },
@@ -1286,9 +1306,9 @@
       "holding": "FAS",
       "entry_price": 138.27999877929688,
       "entry_date": "2026-06-09",
-      "equity": 1240.6784931992345,
+      "equity": 1249.8636017871515,
       "shares": 6.803830280624898,
-      "days_since_check": 3,
+      "days_since_check": 4,
       "trades": [
         {
           "date": "2026-05-26",
@@ -1509,6 +1529,10 @@
         {
           "date": "2026-08-04",
           "equity": 1240.68
+        },
+        {
+          "date": "2026-08-05",
+          "equity": 1249.86
         }
       ]
     },
@@ -1525,9 +1549,9 @@
       "holding": "ERX",
       "entry_price": 87.25,
       "entry_date": "2026-07-16",
-      "equity": 692.9194507236457,
+      "equity": 667.1180930825626,
       "shares": 7.588648223092968,
-      "days_since_check": 3,
+      "days_since_check": 4,
       "trades": [
         {
           "date": "2026-05-26",
@@ -1763,6 +1787,10 @@
         {
           "date": "2026-08-04",
           "equity": 692.92
+        },
+        {
+          "date": "2026-08-05",
+          "equity": 667.12
         }
       ]
     },
@@ -1780,7 +1808,7 @@
       "entry_date": null,
       "equity": 595.6989866932457,
       "shares": 0,
-      "days_since_check": 3,
+      "days_since_check": 4,
       "trades": [
         {
           "date": "2026-05-26",
@@ -2039,6 +2067,10 @@
         {
           "date": "2026-08-04",
           "equity": 595.7
+        },
+        {
+          "date": "2026-08-05",
+          "equity": 595.7
         }
       ]
     }
@@ -2239,6 +2271,10 @@
     {
       "date": "2026-08-04",
       "total_equity": 7092.96
+    },
+    {
+      "date": "2026-08-05",
+      "total_equity": 7068.43
     }
   ]
 }
