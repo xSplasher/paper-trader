@@ -1,8 +1,8 @@
 {
   "created": "2026-05-23 16:00",
-  "last_run": "2026-08-27 23:37 ET",
-  "last_run_date": "2026-08-27",
-  "run_count": 66,
+  "last_run": "2026-08-28 22:20 ET",
+  "last_run_date": "2026-08-28",
+  "run_count": 67,
   "strategies": {
     "S1_TQQQ_SOXL_20d_5d": {
       "name": "TQQQ+SOXL 20d mom, 5d check",
@@ -16,9 +16,9 @@
       "holding": "TQQQ",
       "entry_price": 77.1500015258789,
       "entry_date": "2026-08-13",
-      "equity": 861.3267253715933,
+      "equity": 844.2881490737482,
       "shares": 11.750705177507326,
-      "days_since_check": 0,
+      "days_since_check": 1,
       "trades": [
         {
           "date": "2026-05-26",
@@ -322,6 +322,10 @@
         {
           "date": "2026-08-27",
           "equity": 861.33
+        },
+        {
+          "date": "2026-08-28",
+          "equity": 844.29
         }
       ]
     },
@@ -339,7 +343,7 @@
       "entry_date": null,
       "equity": 852.3406823630114,
       "shares": 0,
-      "days_since_check": 5,
+      "days_since_check": 6,
       "trades": [
         {
           "date": "2026-05-26",
@@ -621,6 +625,10 @@
         {
           "date": "2026-08-27",
           "equity": 852.34
+        },
+        {
+          "date": "2026-08-28",
+          "equity": 852.34
         }
       ]
     },
@@ -636,9 +644,9 @@
       "holding": "TQQQ",
       "entry_price": 70.4800033569336,
       "entry_date": "2026-08-20",
-      "equity": 928.9582646654751,
+      "equity": 910.5818160963355,
       "shares": 12.673372796581319,
-      "days_since_check": 5,
+      "days_since_check": 6,
       "trades": [
         {
           "date": "2026-05-26",
@@ -927,6 +935,10 @@
         {
           "date": "2026-08-27",
           "equity": 928.96
+        },
+        {
+          "date": "2026-08-28",
+          "equity": 910.58
         }
       ]
     },
@@ -1355,6 +1367,10 @@
         {
           "date": "2026-08-27",
           "equity": 1044.35
+        },
+        {
+          "date": "2026-08-28",
+          "equity": 1044.35
         }
       ]
     },
@@ -1364,9 +1380,9 @@
       "holding": "QQQ",
       "entry_price": 723.8499755859375,
       "entry_date": "2026-08-04",
-      "equity": 871.0998949590149,
+      "equity": 865.4464700847298,
       "shares": 1.2079986585324123,
-      "days_in_trade": 17,
+      "days_in_trade": 18,
       "trades": [
         {
           "date": "2026-05-26",
@@ -1670,6 +1686,10 @@
         {
           "date": "2026-08-27",
           "equity": 871.1
+        },
+        {
+          "date": "2026-08-28",
+          "equity": 865.45
         }
       ]
     },
@@ -1685,9 +1705,9 @@
       "holding": "UPRO",
       "entry_price": 157.67999267578125,
       "entry_date": "2026-08-13",
-      "equity": 1222.6766818536896,
+      "equity": 1213.64110152862,
       "shares": 7.9960542317131935,
-      "days_since_check": 0,
+      "days_since_check": 1,
       "trades": [
         {
           "date": "2026-05-26",
@@ -1991,6 +2011,10 @@
         {
           "date": "2026-08-27",
           "equity": 1222.68
+        },
+        {
+          "date": "2026-08-28",
+          "equity": 1213.64
         }
       ]
     },
@@ -2007,9 +2031,9 @@
       "holding": "KORU",
       "entry_price": 21.40999984741211,
       "entry_date": "2026-08-27",
-      "equity": 686.683638094642,
+      "equity": 666.1569163574038,
       "shares": 32.073033301662704,
-      "days_since_check": 0,
+      "days_since_check": 1,
       "trades": [
         {
           "date": "2026-05-26",
@@ -2358,6 +2382,10 @@
         {
           "date": "2026-08-27",
           "equity": 686.68
+        },
+        {
+          "date": "2026-08-28",
+          "equity": 666.16
         }
       ]
     },
@@ -2373,9 +2401,9 @@
       "holding": "KORU",
       "entry_price": 21.40999984741211,
       "entry_date": "2026-08-27",
-      "equity": 594.709888222691,
+      "equity": 576.9324959670615,
       "shares": 27.77720188982511,
-      "days_since_check": 0,
+      "days_since_check": 1,
       "trades": [
         {
           "date": "2026-05-26",
@@ -2739,6 +2767,10 @@
         {
           "date": "2026-08-27",
           "equity": 594.71
+        },
+        {
+          "date": "2026-08-28",
+          "equity": 576.93
         }
       ]
     }
@@ -3007,6 +3039,10 @@
     {
       "date": "2026-08-27",
       "total_equity": 7062.15
+    },
+    {
+      "date": "2026-08-28",
+      "total_equity": 6973.74
     }
   ]
 }
