@@ -1,8 +1,8 @@
 {
   "created": "2026-05-23 16:00",
-  "last_run": "2026-10-29 19:27 ET",
-  "last_run_date": "2026-10-29",
-  "run_count": 110,
+  "last_run": "2026-10-30 19:03 ET",
+  "last_run_date": "2026-10-30",
+  "run_count": 111,
   "strategies": {
     "S1_TQQQ_SOXL_20d_5d": {
       "name": "TQQQ+SOXL 20d mom, 5d check",
@@ -18,7 +18,7 @@
       "entry_date": null,
       "equity": 697.7395788398583,
       "shares": 0,
-      "days_since_check": 3,
+      "days_since_check": 4,
       "trades": [
         {
           "date": "2026-05-26",
@@ -551,6 +551,10 @@
         {
           "date": "2026-10-29",
           "equity": 697.74
+        },
+        {
+          "date": "2026-10-30",
+          "equity": 697.74
         }
       ]
     },
@@ -568,7 +572,7 @@
       "entry_date": null,
       "equity": 577.6440763582708,
       "shares": 0,
-      "days_since_check": 8,
+      "days_since_check": 9,
       "trades": [
         {
           "date": "2026-05-26",
@@ -1056,6 +1060,10 @@
         {
           "date": "2026-10-29",
           "equity": 577.64
+        },
+        {
+          "date": "2026-10-30",
+          "equity": 577.64
         }
       ]
     },
@@ -1073,7 +1081,7 @@
       "entry_date": null,
       "equity": 613.4657194686802,
       "shares": 0,
-      "days_since_check": 8,
+      "days_since_check": 9,
       "trades": [
         {
           "date": "2026-05-26",
@@ -1576,17 +1584,21 @@
         {
           "date": "2026-10-29",
           "equity": 613.47
+        },
+        {
+          "date": "2026-10-30",
+          "equity": 613.47
         }
       ]
     },
     "S4_SPY_RSI": {
       "name": "SPY RSI(2) mean reversion",
       "type": "rsi_reversion",
-      "holding": null,
-      "entry_price": 0,
-      "entry_date": "2026-10-23",
+      "holding": "SPY",
+      "entry_price": 755.719970703125,
+      "entry_date": "2026-10-30",
       "equity": 1072.1850180578501,
-      "shares": 0,
+      "shares": 1.4187596723959601,
       "days_in_trade": 0,
       "trades": [
         {
@@ -1857,6 +1869,13 @@
           "ticker": "SPY",
           "price": 769.66,
           "pnl_pct": 1.28,
+          "equity": 1072.19
+        },
+        {
+          "date": "2026-10-30",
+          "action": "BUY",
+          "ticker": "SPY",
+          "price": 755.72,
           "equity": 1072.19
         }
       ],
@@ -2299,6 +2318,10 @@
         },
         {
           "date": "2026-10-29",
+          "equity": 1072.19
+        },
+        {
+          "date": "2026-10-30",
           "equity": 1072.19
         }
       ]
@@ -2814,6 +2837,10 @@
         {
           "date": "2026-10-29",
           "equity": 827.34
+        },
+        {
+          "date": "2026-10-30",
+          "equity": 827.34
         }
       ]
     },
@@ -2829,9 +2856,9 @@
       "holding": "FAS",
       "entry_price": 160.5800018310547,
       "entry_date": "2026-10-26",
-      "equity": 1145.1220796625253,
+      "equity": 1121.907821714995,
       "shares": 6.807692966866291,
-      "days_since_check": 3,
+      "days_since_check": 4,
       "trades": [
         {
           "date": "2026-05-26",
@@ -3356,6 +3383,10 @@
         {
           "date": "2026-10-29",
           "equity": 1145.12
+        },
+        {
+          "date": "2026-10-30",
+          "equity": 1121.91
         }
       ]
     },
@@ -3372,9 +3403,9 @@
       "holding": "ERX",
       "entry_price": 119.5,
       "entry_date": "2026-10-13",
-      "equity": 477.4638940537589,
+      "equity": 494.7507543374092,
       "shares": 3.841531020490242,
-      "days_since_check": 2,
+      "days_since_check": 3,
       "trades": [
         {
           "date": "2026-05-26",
@@ -3944,6 +3975,10 @@
         {
           "date": "2026-10-29",
           "equity": 477.46
+        },
+        {
+          "date": "2026-10-30",
+          "equity": 494.75
         }
       ]
     },
@@ -3959,9 +3994,9 @@
       "holding": "DPST",
       "entry_price": 123.08000183105469,
       "entry_date": "2026-10-27",
-      "equity": 383.7812069156225,
+      "equity": 370.70687372064384,
       "shares": 3.0835707033481903,
-      "days_since_check": 2,
+      "days_since_check": 3,
       "trades": [
         {
           "date": "2026-05-26",
@@ -4531,6 +4566,10 @@
         {
           "date": "2026-10-29",
           "equity": 383.78
+        },
+        {
+          "date": "2026-10-30",
+          "equity": 370.71
         }
       ]
     }
@@ -4975,6 +5014,10 @@
     {
       "date": "2026-10-29",
       "total_equity": 5794.75
+    },
+    {
+      "date": "2026-10-30",
+      "total_equity": 5775.74
     }
   ]
 }
