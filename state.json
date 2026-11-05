@@ -1,8 +1,8 @@
 {
   "created": "2026-05-23 16:00",
-  "last_run": "2026-11-03 19:02 ET",
-  "last_run_date": "2026-11-03",
-  "run_count": 113,
+  "last_run": "2026-11-04 19:26 ET",
+  "last_run_date": "2026-11-04",
+  "run_count": 114,
   "strategies": {
     "S1_TQQQ_SOXL_20d_5d": {
       "name": "TQQQ+SOXL 20d mom, 5d check",
@@ -18,7 +18,7 @@
       "entry_date": null,
       "equity": 697.7395788398583,
       "shares": 0,
-      "days_since_check": 0,
+      "days_since_check": 1,
       "trades": [
         {
           "date": "2026-05-26",
@@ -563,6 +563,10 @@
         {
           "date": "2026-11-03",
           "equity": 697.74
+        },
+        {
+          "date": "2026-11-04",
+          "equity": 697.74
         }
       ]
     },
@@ -580,7 +584,7 @@
       "entry_date": null,
       "equity": 577.6440763582708,
       "shares": 0,
-      "days_since_check": 0,
+      "days_since_check": 1,
       "trades": [
         {
           "date": "2026-05-26",
@@ -1080,6 +1084,10 @@
         {
           "date": "2026-11-03",
           "equity": 577.64
+        },
+        {
+          "date": "2026-11-04",
+          "equity": 577.64
         }
       ]
     },
@@ -1097,7 +1105,7 @@
       "entry_date": null,
       "equity": 613.4657194686802,
       "shares": 0,
-      "days_since_check": 0,
+      "days_since_check": 1,
       "trades": [
         {
           "date": "2026-05-26",
@@ -1612,18 +1620,22 @@
         {
           "date": "2026-11-03",
           "equity": 613.47
+        },
+        {
+          "date": "2026-11-04",
+          "equity": 613.47
         }
       ]
     },
     "S4_SPY_RSI": {
       "name": "SPY RSI(2) mean reversion",
       "type": "rsi_reversion",
-      "holding": "SPY",
-      "entry_price": 755.719970703125,
+      "holding": null,
+      "entry_price": 0,
       "entry_date": "2026-10-30",
-      "equity": 1070.2413242342052,
-      "shares": 1.4187596723959601,
-      "days_in_trade": 1,
+      "equity": 1087.9191009261774,
+      "shares": 0,
+      "days_in_trade": 0,
       "trades": [
         {
           "date": "2026-06-08",
@@ -1901,6 +1913,14 @@
           "ticker": "SPY",
           "price": 755.72,
           "equity": 1072.19
+        },
+        {
+          "date": "2026-11-04",
+          "action": "SELL",
+          "ticker": "SPY",
+          "price": 766.81,
+          "pnl_pct": 1.47,
+          "equity": 1087.92
         }
       ],
       "history": [
@@ -2355,6 +2375,10 @@
         {
           "date": "2026-11-03",
           "equity": 1070.24
+        },
+        {
+          "date": "2026-11-04",
+          "equity": 1087.92
         }
       ]
     },
@@ -2881,6 +2905,10 @@
         {
           "date": "2026-11-03",
           "equity": 827.34
+        },
+        {
+          "date": "2026-11-04",
+          "equity": 827.34
         }
       ]
     },
@@ -2896,9 +2924,9 @@
       "holding": "FAS",
       "entry_price": 160.5800018310547,
       "entry_date": "2026-10-26",
-      "equity": 1156.6269935197224,
+      "equity": 1275.7616204398826,
       "shares": 6.807692966866291,
-      "days_since_check": 0,
+      "days_since_check": 1,
       "trades": [
         {
           "date": "2026-05-26",
@@ -3435,6 +3463,10 @@
         {
           "date": "2026-11-03",
           "equity": 1156.63
+        },
+        {
+          "date": "2026-11-04",
+          "equity": 1275.76
         }
       ]
     },
@@ -3448,12 +3480,12 @@
       ],
       "mom_period": 20,
       "check_interval": 5,
-      "holding": "ERX",
-      "entry_price": 119.5,
-      "entry_date": "2026-10-13",
-      "equity": 447.53836388711323,
-      "shares": 3.841531020490242,
-      "days_since_check": 4,
+      "holding": "NAIL",
+      "entry_price": 40.68000030517578,
+      "entry_date": "2026-11-04",
+      "equity": 405.5888521774132,
+      "shares": 9.97022736319423,
+      "days_since_check": 0,
       "trades": [
         {
           "date": "2026-05-26",
@@ -3581,6 +3613,21 @@
           "ticker": "ERX",
           "price": 119.5,
           "equity": 459.06
+        },
+        {
+          "date": "2026-11-04",
+          "action": "SELL",
+          "ticker": "ERX",
+          "price": 105.58,
+          "pnl_pct": -11.65,
+          "equity": 405.59
+        },
+        {
+          "date": "2026-11-04",
+          "action": "BUY",
+          "ticker": "NAIL",
+          "price": 40.68,
+          "equity": 405.59
         }
       ],
       "history": [
@@ -4035,6 +4082,10 @@
         {
           "date": "2026-11-03",
           "equity": 447.54
+        },
+        {
+          "date": "2026-11-04",
+          "equity": 405.59
         }
       ]
     },
@@ -4050,9 +4101,9 @@
       "holding": "DPST",
       "entry_price": 123.08000183105469,
       "entry_date": "2026-10-27",
-      "equity": 382.42442827790046,
+      "equity": 402.31347342996276,
       "shares": 3.0835707033481903,
-      "days_since_check": 4,
+      "days_since_check": 0,
       "trades": [
         {
           "date": "2026-05-26",
@@ -4634,6 +4685,10 @@
         {
           "date": "2026-11-03",
           "equity": 382.42
+        },
+        {
+          "date": "2026-11-04",
+          "equity": 402.31
         }
       ]
     }
@@ -5090,6 +5145,10 @@
     {
       "date": "2026-11-03",
       "total_equity": 5773.02
+    },
+    {
+      "date": "2026-11-04",
+      "total_equity": 5887.78
     }
   ]
 }
